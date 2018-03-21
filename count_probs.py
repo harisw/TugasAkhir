@@ -11,7 +11,7 @@ def count_probs():
         classes = file.read()
         classes = classes.splitlines()
         print(classes)
-        cursor.execute("SELECT * FROM dictionary WHERE id<7000")
+        cursor.execute("SELECT * FROM dictionary")
         results = cursor.fetchall()
         joy = float(classes[0].split(' ')[1])
         anger = float(classes[1].split(' ')[1])

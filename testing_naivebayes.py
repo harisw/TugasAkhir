@@ -22,9 +22,9 @@ def test_naive_bayes():
         class_list = [classes[0].split(' ')[0], classes[1].split(' ')[0], classes[2].split(' ')[0], \
                         classes[3].split(' ')[0], classes[4].split(' ')[0], classes[5].split(' ')[0], classes[6].split(' ')[0] ]
         
-        cursor.execute("SELECT * FROM data WHERE id>=7000")
+        cursor.execute("SELECT * FROM data WHERE id>=7001")
         results = cursor.fetchall()
-        cursor.execute("SELECT COUNT(*) FROM data WHERE id>=7000")
+        cursor.execute("SELECT COUNT(*) FROM data WHERE id>=7001")
         results_amount = cursor.fetchone()
         results_amount = results_amount[0]
         true_amount = 0
@@ -50,42 +50,58 @@ def test_naive_bayes():
             guilt_x = 1
             check = False
 
+            checked_sentence = []
             for word in sentence:
-                if check:
+                if check and word not in checked_sentence:
+                    checked_sentence.append(word)
                     cursor.execute("SELECT joy_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         joy_x = joy_x*probs_res[0]
+                    else:
+                        joy_x = joy_x *(float(1)/float(joy))
 
                     cursor.execute("SELECT fear_probs from dictionary where word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         fear_x = fear_x*probs_res[0]
+                    else:
+                        fear_x = fear_x *(float(1)/float(fear))
 
                     cursor.execute("SELECT anger_probs from dictionary where word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         anger_x = anger_x*probs_res[0]
+                    else:
+                        anger_x = anger_x *(float(1)/float(anger))
 
                     cursor.execute("SELECT sadness_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         sadness_x = sadness_x*probs_res[0]
+                    else:
+                        sadness_x = sadness_x *(float(1)/float(sad))
 
                     cursor.execute("SELECT disgust_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         disgust_x = disgust_x*probs_res[0]
+                    else:
+                        disgust_x = disgust_x *(float(1)/float(disgust))
 
                     cursor.execute("SELECT shame_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         shame_x = shame_x*probs_res[0]
+                    else:
+                        shame_x = shame_x *(float(1)/float(shame))
 
                     cursor.execute("SELECT guilt_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
                         guilt_x = guilt_x*probs_res[0]
+                    else:
+                        guilt_x = guilt_x *(float(1)/float(guilt))
                 check = True
 
             joy_probs = float(joy_x) * joy_prior_probs
@@ -102,7 +118,10 @@ def test_naive_bayes():
             # print(probs_list)
             
             probs_list = [joy_probs, fear_probs, anger_probs, disgust_probs, guilt_probs, sadness_probs, shame_probs]
+            print("Joy : {0:.11f}, Fear : {1:.11f}, Anger : {2:.11f}, Disgust : {3:.11f}, Guilt : {4:.11f}, Sad : {5:.11f}, Shame : {6:.11f}" \
+                    .format(joy_probs, fear_probs, anger_probs, disgust_probs, guilt_probs, sadness_probs, shame_probs))
             prediction = find_max(probs_list)
+            print(prediction)
             print("Real Class: %s " % res[1])
             print("Prediction: %s " % class_list[prediction])
             if res[1] == class_list[prediction]:
@@ -110,6 +129,8 @@ def test_naive_bayes():
         
         accuracy = (float(true_amount) / float(results_amount)) * 100
         print("Accuracy : {0:.4f}".format(accuracy))
+        print(true_amount)
+        print(results_amount)
     except Error as e:
         print(e)
     finally:
@@ -117,15 +138,14 @@ def test_naive_bayes():
         conn.close()
 
 def find_max(prob_list):
-    max = prob_list[0]
+    my_max = prob_list[0]
     max_index = 0
-    curr_index = 1
+    curr_index = 0
     for item in prob_list:
-        if item > max:
-            max = item
+        if item > my_max:
+            my_max = item
             max_index = curr_index
-        if curr_index != 6:
-            curr_index += 1
+        curr_index += 1
     return max_index
 
 if __name__ == '__main__':
