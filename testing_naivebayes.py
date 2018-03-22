@@ -50,10 +50,10 @@ def test_naive_bayes():
             guilt_x = 1
             check = False
 
-            checked_sentence = []
+            # checked_sentence = []
             for word in sentence:
-                if check and word not in checked_sentence:
-                    checked_sentence.append(word)
+                if check  and len(word) > 2:
+                    # checked_sentence.append(word)
                     cursor.execute("SELECT joy_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount >0):
