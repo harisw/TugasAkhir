@@ -17,3 +17,4 @@ TESTING 2
     - remove time quantifier ('second', 'minute', 'hour', 'day', 'month', 'year')
     - remove number quantifier ('st', 'nd', 'rd', 'th', 'one', 'two',
                              'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten')
+    Accuracy 234 of 538 (43.49%)

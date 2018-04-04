@@ -13,7 +13,7 @@ def process_with_fetch():
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute(" SELECT * FROM data")
+        cursor.execute(" SELECT * FROM data2")
         row = cursor.fetchall()
         print("masuk")
 
@@ -36,7 +36,7 @@ def process_with_fetch():
             other_noises = ['st', 'nd', 'rd', 'th', 'one', 'two',
                              'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'second', 'seconds', 'minute',
                                'minutes', 'hour', 'hours', 'days', 'month', 'year']
-
+            exception_word = ['go', 'ok']
             lmtzr = WordNetLemmatizer()     
             for w in word_tokens:
                 check = False
@@ -50,11 +50,12 @@ def process_with_fetch():
                     if(not check):
                         temp = lmtzr.lemmatize(w)
                 w = temp
-                if w not in stop_words and w not in other_noises and len(w) > 1:
+                if w not in stop_words and w not in other_noises and len(w) > 2:
+                    last_string += " "+ w
+                elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
             print(last_string)
-            result = cursor.execute(" UPDATE data SET SIT=%s WHERE id=%s ",
-            (last_string, item[0]))
+            result = cursor.execute(" UPDATE data2 SET SIT=%s WHERE id=%s ",(last_string, item[0]))
 
     except Error as e:
         print(e)

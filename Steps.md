@@ -16,4 +16,9 @@
     4. Delete all word that only have 2 char except "go" and "ok"
 
 
+1. Preprocess_bow.py
+2. count_class_word.py
+3. count_word_occurences.py
+4. count_probs.py
+5. testing_naive_bayes.py
 *P.S : each class probs = number of word occurences on x Class / number of word in x class
