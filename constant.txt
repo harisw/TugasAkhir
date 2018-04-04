@@ -1,7 +1,6 @@
-joy 1094
-fear 1095
-anger 1096
-disgust 1096
-guilt 1093
-sadness 1096
-shame 1096
+joy 1069
+fear 1078
+anger 1085
+disgust 1071
+sadness 1037
+shame 1047

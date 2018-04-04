@@ -20,7 +20,6 @@ def process_with_fetch():
         for item in row:
             #Removing punctuation and special char
             newstring = item[5].lower()
-            # newstring = newstring.strip(string.punctuation)
             newstring = re.sub('[^A-Za-z0-9 ]+', '', newstring)
             #Removing digit
             # newstring = ' '.join(newstring.strip(string.punctuation) for word in newstring.split())
@@ -35,7 +34,8 @@ def process_with_fetch():
             filtered_sentence = []
             last_string = ""
             other_noises = ['st', 'nd', 'rd', 'th', 'one', 'two',
-                             'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'day', 'month', 'year']
+                             'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'second', 'seconds', 'minute',
+                               'minutes', 'hour', 'hours', 'days', 'month', 'year']
 
             lmtzr = WordNetLemmatizer()     
             for w in word_tokens:
@@ -50,7 +50,7 @@ def process_with_fetch():
                     if(not check):
                         temp = lmtzr.lemmatize(w)
                 w = temp
-                if w not in stop_words and w not in other_noises:
+                if w not in stop_words and w not in other_noises and len(w) > 1:
                     last_string += " "+ w
             print(last_string)
             result = cursor.execute(" UPDATE data SET SIT=%s WHERE id=%s ",

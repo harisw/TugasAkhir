@@ -7,19 +7,16 @@ def count_probs():
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor(buffered=True)
         
-        file = open("constant.txt", "r+")
-        classes = file.read()
-        classes = classes.splitlines()
-        print(classes)
         cursor.execute("SELECT * FROM dictionary")
         results = cursor.fetchall()
-        joy = float(classes[0].split(' ')[1])
-        anger = float(classes[1].split(' ')[1])
-        fear = float(classes[2].split(' ')[1])
-        disgust = float(classes[3].split(' ')[1])
-        guilt = float(classes[4].split(' ')[1])
-        sad = float(classes[5].split(' ')[1])
-        shame = float(classes[6].split(' ')[1])
+        cursor.execute("SELECT * FROM meta_class")
+        classes = cursor.fetchall()
+        joy = float(classes[0][2])
+        fear = float(classes[1][2])
+        anger = float(classes[2][2])
+        sad = float(classes[3][2])
+        disgust = float(classes[4][2])
+        shame = float(classes[5][2])
         for res in results:
             print(res[1])
             joy_probs = res[2] / joy
@@ -28,10 +25,9 @@ def count_probs():
             sad_probs = res[5] / sad
             disgust_probs = res[6] / disgust
             shame_probs = res[7] / shame
-            guilt_probs = res[8] / guilt
             cursor.execute("UPDATE dictionary SET joy_probs=%(joy)s, fear_probs=%(fear)s, anger_probs=%(anger)s, sadness_probs=%(sad)s, \
-                            disgust_probs=%(disgust)s, shame_probs=%(shame)s, guilt_probs=%(guilt)s WHERE id=%(target)s", {'joy':joy_probs, \
-                            'fear': fear_probs, 'anger': anger_probs, 'sad': sad_probs, 'disgust': disgust_probs, 'shame': shame_probs, 'guilt': guilt_probs, 'target': res[0]})
+                            disgust_probs=%(disgust)s, shame_probs=%(shame)s WHERE id=%(target)s", {'joy':joy_probs, \
+                            'fear': fear_probs, 'anger': anger_probs, 'sad': sad_probs, 'disgust': disgust_probs, 'shame': shame_probs, 'target': res[0]})
         # classes = ['joy', 'fear', 'anger', 'sadness', 'disgust', 'shame', 'guilt']
 
     except Error as e:
@@ -40,7 +36,6 @@ def count_probs():
         conn.commit()
         cursor.close()
         conn.close()
-        file.close()
 
 if __name__ == '__main__':
     count_probs()
