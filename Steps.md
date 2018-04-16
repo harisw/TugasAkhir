@@ -15,6 +15,7 @@
                 else insert it into the table as new row, and add 1 as the number of occurences
     4. Delete all word that only have 2 char except "go" and "ok"
 
+    5. Correcting typos
 
 1. Preprocess_bow.py
 2. count_class_word.py

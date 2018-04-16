@@ -8,6 +8,8 @@ import re
 import sys
 from unidecode import unidecode
 import string
+from autocorrect import spell
+
 def process_with_fetch():
     try:
         dbconfig = read_db_config()
@@ -40,6 +42,7 @@ def process_with_fetch():
             lmtzr = WordNetLemmatizer()     
             for w in word_tokens:
                 check = False
+                w = spell(w)
                 temp = lmtzr.lemmatize(w, 'a')
                 if(temp != w):
                     check = True
