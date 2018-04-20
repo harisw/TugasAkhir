@@ -23,3 +23,4 @@
 4. count_probs.py
 5. testing_naive_bayes.py
 *P.S : each class probs = number of word occurences on x Class / number of word in x class
+
