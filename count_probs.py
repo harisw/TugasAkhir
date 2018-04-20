@@ -19,6 +19,9 @@ def count_probs():
         shame = float(classes[5][2])
         for res in results:
             print(res[1])
+            total_occurences = res[2] + res[3] + res[4] + res[5] + res[6] + res[7]
+            if total_occurences < 10:
+                print(res)
             joy_probs = res[2] / joy
             fear_probs = res[3] / fear
             anger_probs = res[4] / anger

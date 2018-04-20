@@ -26,9 +26,9 @@ def test_naive_bayes():
         class_list = [classes[0].split(' ')[0], classes[1].split(' ')[0], classes[2].split(' ')[0], \
                         classes[3].split(' ')[0], classes[4].split(' ')[0], classes[5].split(' ')[0]]
         
-        cursor.execute("SELECT * FROM data2 WHERE id > 7001")
+        cursor.execute("SELECT * FROM data2 WHERE id > 7600")
         results = cursor.fetchall()
-        cursor.execute("SELECT COUNT(*) FROM data2 WHERE id > 7001")
+        cursor.execute("SELECT COUNT(*) FROM data2 WHERE id > 7600")
         results_amount = cursor.fetchone()
         results_amount = results_amount[0]
         true_amount = 0
@@ -106,12 +106,12 @@ def test_naive_bayes():
                 # break
                 check = True
 
-            joy_probs = float(joy_x) * joy_prior_probs * 10000000
-            fear_probs = float(fear_x) * fear_prior_probs * 10000000
-            anger_probs = float(anger_x) * anger_prior_probs * 10000000
-            sadness_probs = float(sadness_x) * sadness_prior_probs * 10000000
-            disgust_probs = float(disgust_x) * disgust_prior_probs * 10000000
-            shame_probs = float(shame_x) * shame_prior_probs * 10000000
+            joy_probs = float(joy_x) * joy_prior_probs * 1000000000
+            fear_probs = float(fear_x) * fear_prior_probs * 1000000000
+            anger_probs = float(anger_x) * anger_prior_probs * 1000000000
+            sadness_probs = float(sadness_x) * sadness_prior_probs * 1000000000
+            disgust_probs = float(disgust_x) * disgust_prior_probs * 1000000000
+            shame_probs = float(shame_x) * shame_prior_probs * 1000000000
             
             # probs_list = {1: joy_probs, 2: fear_probs, 3: anger_probs, 4: sadness_probs, 5: disgust_probs, 6: shame_probs, 7: guilt_probs}
             # print(probs_list[6])
@@ -119,7 +119,7 @@ def test_naive_bayes():
             # print(probs_list)
             
             probs_list = [joy_probs, fear_probs, anger_probs, disgust_probs, sadness_probs, shame_probs]
-            print("Joy    : {0:.20f},\nFear   : {1:.20f}, \nAnger  : {2:.20f}, \nDisgust: {3:.20f}, \nSad    : {4:.20f}, \nShame  : {5:.20f}" \
+            print("Joy    : {0:.35f},\nFear   : {1:.35f}, \nAnger  : {2:.35f}, \nDisgust: {3:.35f}, \nSad    : {4:.35f}, \nShame  : {5:.35f}" \
                     .format(joy_probs, fear_probs, anger_probs, disgust_probs, sadness_probs, shame_probs))
             prediction = find_max(probs_list)
             print(prediction)
