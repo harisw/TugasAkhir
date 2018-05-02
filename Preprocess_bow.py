@@ -15,20 +15,19 @@ def process_with_fetch():
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute(" SELECT * FROM data2")
+        cursor.execute(" SELECT * FROM data_maxentropy")
         row = cursor.fetchall()
-        print("masuk")
+        # print("masuk")
 
         for item in row:
             #Removing punctuation and special char
-            newstring = item[5].lower()
+            newstring = item[2].lower()
             newstring = re.sub('[^A-Za-z0-9 ]+', '', newstring)
             #Removing digit
             # newstring = ' '.join(newstring.strip(string.punctuation) for word in newstring.split())
             newstring = re.sub('\d+', '', newstring)
             newstring = unidecode(newstring)
             #Lowercasing
-            print(newstring)
             # Tokenizing
             word_tokens = word_tokenize(newstring)
             filtered_sentence = [w for w in word_tokens if not w in stop_words] 
@@ -57,8 +56,8 @@ def process_with_fetch():
                     last_string += " "+ w
                 elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
-            print(last_string)
-            result = cursor.execute(" UPDATE data2 SET SIT=%s WHERE id=%s ",(last_string, item[0]))
+            print(item[0])
+            result = cursor.execute(" UPDATE data_maxentropy SET sentence=%s WHERE id=%s ",(last_string, item[0]))
 
     except Error as e:
         print(e)

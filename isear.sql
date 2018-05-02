@@ -1,5 +1,5 @@
 SET autocommit=0;
-INSERT INTO `data` (`ID`, `Field1`, `Field3`, `Field2`, `MYKEY`, `SIT`, `STATE`) VALUES
+INSERT INTO `data_original` (`id`, `class`, `Field3`, `Field2`, `MYKEY`, `SIT`, `STATE`) VALUES
 	(1, 'joy', 4, 3, '0110011', 'During the period of falling in love, each time that we met and á\nespecially when we had not met for a long time.', '1'),
 	(2, 'fear', 3, 2, '0110012', 'When I was involved in a traffic accident.', '1'),
 	(3, 'anger', 1, 3, '0110013', 'When I was driving home after  several days of hard work, there á\nwas a motorist ahead of me who was driving at 50 km/hour and á\nrefused, despite his low speeed to let me overtake.', '1'),
@@ -5859,7 +5859,7 @@ INSERT INTO `data` (`ID`, `Field1`, `Field3`, `Field2`, `MYKEY`, `SIT`, `STATE`)
 	(5857, 'joy', 4, 3, '2210801', 'A party with no worries (i.e. no tests homework etc.) many á\nfriends were present and good music.', '1'),
 	(5858, 'fear', 4, 3, '2210802', 'I\'m afraid of not being able to go to the school I want because á\nof suffering grades.', '1'),
 	(5859, 'anger', 4, 4, '2210803', 'I was stood up for a date function by someone who I really cared á\nfor.', '1');
-INSERT INTO `data` (`ID`, `Field1`, `Field3`, `Field2`, `MYKEY`, `SIT`, `STATE`) VALUES
+INSERT INTO `data_original` (`id`, `class`, `Field3`, `Field2`, `MYKEY`, `SIT`, `STATE`) VALUES
 	(5860, 'sadness', 4, 4, '2210804', 'After blowing up and saying all the wrong things, I realized what á\nI had done and hurt that person and myself.', '1'),
 	(5861, 'disgust', 4, 4, '2210805', 'My friends aren\'t working for the same common goal we all need to á\naccomplish.', '1'),
 	(5862, 'shame', 3, 2, '2210806', 'I was supposed to do something and didn\'t. The person was really á\ndependiong on me.', '1'),
