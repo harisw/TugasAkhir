@@ -7,7 +7,12 @@ def process_words():
 		dbconfig = read_db_config()
 		conn = MySQLConnection(**dbconfig)
 		cursor = conn.cursor(buffered=True)
-		cursor.execute("SELECT sentence FROM data3 where id < 20")
+
+		# CLEAN AND RESET TABLE ID
+		cursor.execute("TRUNCATE dictionary_maxentropy")
+		cursor.execute("ALTER TABLE dictionary_maxentropy AUTO_INCREMENT=1")
+		cursor.execute("SELECT sentence FROM data3")
+		
 		rows = cursor.fetchall()
 		word_list = []
 		for item in rows:
