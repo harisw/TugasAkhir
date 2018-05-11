@@ -1,5 +1,6 @@
 from mysql.connector import MySQLConnection, Error
 from python_mysql_dbconfig import read_db_config
+from progress.spinner import PieSpinner
 
 def count_probs():
     try:
@@ -17,11 +18,13 @@ def count_probs():
         sad = float(classes[3][2])
         disgust = float(classes[4][2])
         shame = float(classes[5][2])
+        spinner = PieSpinner('\nCounting Probabilities :: ')
         for res in results:
-            print(res[1])
+            # print(res[1])
+            spinner.next()
             total_occurences = res[2] + res[3] + res[4] + res[5] + res[6] + res[7]
-            if total_occurences < 10:
-                print(res)
+            # if total_occurences < 10:
+                # print(res)
             joy_probs = res[2] / joy
             fear_probs = res[3] / fear
             anger_probs = res[4] / anger
@@ -39,6 +42,8 @@ def count_probs():
         conn.commit()
         cursor.close()
         conn.close()
+        spinner.finish()
+        return 1
 
-if __name__ == '__main__':
-    count_probs()
+# if __name__ == '__main__':
+#     count_probs()
