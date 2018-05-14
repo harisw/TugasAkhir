@@ -135,18 +135,18 @@ def test_naive_bayes(start, end):
             # print(probs_list)
             
             probs_list = [joy_probs, fear_probs, anger_probs, disgust_probs, sadness_probs, shame_probs]
-            print("\nJoy    : {0:.35f},\nFear   : {1:.35f}, \nAnger  : {2:.35f}, \nDisgust: {3:.35f}, \nSad    : {4:.35f}, \nShame  : {5:.35f}" \
-                    .format(joy_probs, fear_probs, anger_probs, disgust_probs, sadness_probs, shame_probs))
+            # print("\nJoy    : {0:.35f},\nFear   : {1:.35f}, \nAnger  : {2:.35f}, \nDisgust: {3:.35f}, \nSad    : {4:.35f}, \nShame  : {5:.35f}" \
+            #         .format(joy_probs, fear_probs, anger_probs, disgust_probs, sadness_probs, shame_probs))
             prediction = find_max(probs_list)
             # print(prediction)
             # print("Real Class: %s " % res[1])
             # print("Prediction: %s " % class_list[prediction])
-            print res[1]
-            print class_list[prediction]
-            print prediction
             if res[1] == class_list[prediction]:
                 true_amount += 1
-            break
+            # print("\n Real class :: "+str(res[1]))
+            # print("\n Predicted :: "+str(class_list[prediction]))
+            # break
+
         accuracy = (float(true_amount) / float(results_amount)) * 100
         print("Accuracy : {0:.4f}".format(accuracy))
         # print(true_amount)
@@ -163,6 +163,10 @@ def find_max(prob_list):
     max_index = 0
     curr_index = 0
     for item in prob_list:
+        # print item
+        # print("\n")
+        # print my_max
+        # print("\n")
         if item > my_max:
             my_max = item
             max_index = curr_index
