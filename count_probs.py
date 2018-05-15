@@ -43,7 +43,7 @@ def count_probs():
         cursor.close()
         conn.close()
         spinner.finish()
-        return 1
+        # return 1
 
 # if __name__ == '__main__':
 #     count_probs()

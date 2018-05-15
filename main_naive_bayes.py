@@ -7,9 +7,12 @@ if __name__ == '__main__':
 	step_constant = 694
 	initial = 1
 	start = 1
-	end = 5
-	while(initial <= 1):
-		count_word = count_word_occurences(start, end)
+	end = 693
+	while(initial <= 10):
+		count_class_word(start, end)
+		count_word_occurences(start, end)
+		count_probs()
+		test_naive_bayes(start, end)
 		start += step_constant
 		end += step_constant
 		initial += 1

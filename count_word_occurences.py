@@ -9,6 +9,7 @@ def count_word_occurences(start, end):
         cursor = conn.cursor(buffered=True)
         cursor.execute("TRUNCATE dictionary")
         classes = [1, 2, 3, 4, 5, 6]
+        spinner = PieSpinner("Counting Word Occurences ")
         for target in classes:
             if start == 1:
                 cursor.execute("SELECT class, sentence FROM data3 WHERE class=%(target)s and id > %(id_target)s", {'target': target, 'id_target': end})
@@ -18,58 +19,49 @@ def count_word_occurences(start, end):
                 cursor.execute("SELECT class, sentence FROM data3 WHERE class=%(target)s and (id < %(id_start)s or id > %(id_end)s)", {'target': target,\
                  'id_start': start, 'id_end': end})
             class_documents = cursor.fetchall()
-            print len(class_documents)
             for row in class_documents:
-                # print row[0]
                 check = False
                 sentence = row[1].split(' ')
-                # print len(sentence)
                 for word in sentence:
-                    print "lala"
-                    # spinner.next()
+                    spinner.next()
                     if len(word) > 0:
-                        if row[0] == 1:
+                        if row[0] == '1':
                             cursor.execute("SELECT word, joy_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                        elif row[0] == 2:
+                        elif row[0] == '2':
                             cursor.execute("SELECT word, fear_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                        elif row[0] == 3:
+                        elif row[0] == '3':
                             cursor.execute("SELECT word, anger_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                        elif row[0] == 4:
+                        elif row[0] == '4':
                             cursor.execute("SELECT word, sadness_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                        elif row[0] == 5:
+                        elif row[0] == '5':
                             cursor.execute("SELECT word, disgust_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                        elif row[0] == 6:
+                        elif row[0] == '6':
                             cursor.execute("SELECT word, shame_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                        elif row[0] == 7:
-                            cursor.execute("SELECT word, guilt_occurences from dictionary WHERE word=%(target)s", {'target':word})
 
                         check_word = cursor.fetchone()
                         if check_word != None:
                             result = check_word[1] + 1
-                            if row[0] == 1:
+                            if row[0] == '1':
                                 cursor.execute("UPDATE dictionary SET joy_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
                                 # cursor.execute("SELECT word, joy_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                            elif row[0] == 2:
+                            elif row[0] == '2':
                                 cursor.execute("UPDATE dictionary SET fear_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
 
                                 # cursor.execute("SELECT word, fear_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                            elif row[0] == 3:
+                            elif row[0] == '3':
                                 cursor.execute("UPDATE dictionary SET anger_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
                                 # cursor.execute("SELECT word, anger_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                            elif row[0] == 4:
+                            elif row[0] == '4':
                                 cursor.execute("UPDATE dictionary SET sadness_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
                                 # cursor.execute("SELECT word, sadness_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                            elif row[0] == 5:
+                            elif row[0] == '5':
                                 cursor.execute("UPDATE dictionary SET disgust_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
                                 # cursor.execute("SELECT word, disgust_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                            elif row[0] == 6:
+                            elif row[0] == '6':
                                 cursor.execute("UPDATE dictionary SET shame_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
                                 # cursor.execute("SELECT word, shame_occurences from dictionary WHERE word=%(target)s", {'target':word})
-                            elif row[0] == 7:
-                                cursor.execute("UPDATE dictionary SET guilt_occurences=%(number)s WHERE word=%(target)s", {'number':result, 'target':word})
-                                # cursor.execute("SELECT word, guilt_occurences from dictionary WHERE word=%(target)s", {'target':word})
+
                         else:
-                            print "INSERT"
                             if row[0] == '1':
                                 cursor.execute("INSERT INTO dictionary(word, joy_occurences) VALUES(%(target)s, 1)", {'target':word})
                             elif row[0] == '2':
@@ -82,8 +74,7 @@ def count_word_occurences(start, end):
                                 cursor.execute("INSERT INTO dictionary(word, disgust_occurences) VALUES(%(target)s, 1)", {'target':word})
                             elif row[0] == '6':
                                 cursor.execute("INSERT INTO dictionary(word, shame_occurences) VALUES(%(target)s, 1)", {'target':word})
-                            elif row[0] == '7':
-                                cursor.execute("INSERT INTO dictionary(word, guilt_occurences) VALUES(%(target)s, 1)", {'target':word})
+
     except Error as e:
         print(e)
 
@@ -91,8 +82,7 @@ def count_word_occurences(start, end):
         conn.commit()
         cursor.close()
         conn.close()
-        # spinner.finish()
-        # return 1
+        spinner.finish()
 
-if __name__ == '__main__':
-    count_word_occurences(1, 100)
+# if __name__ == '__main__':
+#     count_word_occurences(5, 10)

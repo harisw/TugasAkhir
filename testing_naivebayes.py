@@ -11,7 +11,6 @@ def test_naive_bayes(start, end):
 
         cursor.execute("select count(id) as total from data3 group by class")
         total_class = cursor.fetchall()
-        print(total_class)
         joy = float(total_class[0][0])
         fear = float(total_class[0][0])
         anger = float(total_class[0][0])
@@ -25,7 +24,7 @@ def test_naive_bayes(start, end):
 
         # class_list = [classes[0].split(' ')[0], classes[1].split(' ')[0], classes[2].split(' ')[0], \
                         # classes[3].split(' ')[0], classes[4].split(' ')[0], classes[5].split(' ')[0]]
-        class_list = [1, 2, 3, 4, 5, 6] 
+        class_list = ['1', '2', '3', '4', '5', '6'] 
         if start == 1:
             cursor.execute("SELECT * FROM data3 WHERE id <= %(id_target)s", {'id_target': end})
         elif end == 7433:
@@ -68,15 +67,10 @@ def test_naive_bayes(start, end):
             shame_x = 1
             check = False
 
-            # checked_sentence = []
-            # print(sentence[0])
             for word in sentence:
-                # print(word)
                 if word != " ":
                     check = True
                 if check and len(word) > 2:
-                    # print("hitung")
-                    # checked_sentence.append(word)
                     cursor.execute("SELECT joy_probs from dictionary WHERE word=%(target)s", {'target': word})
                     probs_res = cursor.fetchone()
                     if(cursor.rowcount > 0 and probs_res[0] >0):
@@ -149,8 +143,11 @@ def test_naive_bayes(start, end):
 
         accuracy = (float(true_amount) / float(results_amount)) * 100
         print("Accuracy : {0:.4f}".format(accuracy))
-        # print(true_amount)
-        # print(results_amount)
+
+        with open("naive_bayes_result.txt", "a") as out_file:
+            out_file.write("\nTesting start from "+str(start)+" - "+str(end))
+            out_file.write("\nAccuracy : {0:.4f}".format(accuracy))
+            out_file.write("\nNumber of predicted :: "+str(true_amount)+"/"+str(results_amount))
         pie.finish()
     except Error as e:
         print(e)

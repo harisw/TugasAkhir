@@ -15,7 +15,7 @@ def process_with_fetch():
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute(" SELECT * FROM data_maxentropy")
+        cursor.execute(" SELECT * FROM data3")
         row = cursor.fetchall()
         # print("masuk")
 
@@ -56,7 +56,6 @@ def process_with_fetch():
                     last_string += " "+ w
                 elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
-            print(item[0])
             result = cursor.execute(" UPDATE data_maxentropy SET sentence=%s WHERE id=%s ",(last_string, item[0]))
 
     except Error as e:
