@@ -29,4 +29,3 @@
 Multinomial:
  Do Preprocess_bow.py
  Do remove_duplicate
- 

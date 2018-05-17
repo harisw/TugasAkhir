@@ -1,2 +1,3 @@
 config.ini
 *.pyc
+knowledge_based/*

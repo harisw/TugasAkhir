@@ -29,7 +29,6 @@ def process_words():
 
 		index = 0
 		for item in data_train:
-			# print item[2]
 			sentence = word_tokenize(item[2])
 			for w in sentence:
 				cursor.execute("SELECT id FROM dictionary_maxentropy WHERE word=%(w)s", {"w": w})
@@ -39,7 +38,6 @@ def process_words():
 			bar.next()
 			index += 1
 		bar.finish()
-		# e[:, 1:5]
 	
 	except Exception as e:
 		print(e)
@@ -50,28 +48,24 @@ def process_words():
 		return train_bow
 
 def train_classifier(data_train):
-    lr = linear_model.LogisticRegression(verbose=1, multi_class='multinomial', solver='sag', n_jobs=3)
-    mul_lr = linear_model.LogisticRegression(multi_class='multinomial', verbose=1, solver='newton-cg', n_jobs=3)
-    mul_lr3 = linear_model.LogisticRegression(multi_class='multinomial', verbose=1, solver='saga', n_jobs=3)
-    mul_lr4 = linear_model.LogisticRegression(multi_class='multinomial', verbose=1, solver='lbfgs', n_jobs=3)
-    # lr.fit(data_train[:,1:], data_train[:,0])
-
-    # print "Logistic regression Train Accuracy :: ", metrics.accuracy_score(data_train[:,0], lr.predict(data_train[:,1:]))
-    # print "Logistic regression Test Accuracy :: ", metrics.accuracy_score(data_test[:,0], lr.predict(data_test[:,1:]))
-    
-    # print "Multinomial Logistic regression Train Accuracy :: ", metrics.accuracy_score(data_train[:,0], mul_lr.predict(data_train[:,1:]))
-    # print "Multinomial Logistic regression Test Accuracy :: ", metrics.accuracy_score(data_test[:,0], mul_lr.predict(data_test[:,1:]))
-
-    lr_score = cross_val_score(lr, data_train[:,1:], data_train[:,0], cv=10)
-    mul_lr_score = cross_val_score(mul_lr, data_train[:,1:], data_train[:,0], cv=10)
-    mul_lr3_score = cross_val_score(mul_lr3, data_train[:,1:], data_train[:,0], cv=10)
-    mul_lr4_score = cross_val_score(mul_lr4, data_train[:,1:], data_train[:,0], cv=10)
-    # print "Logistic Regression CrossVal Score :: ", lr_score
-    # print "Multinomial Logistic Regression CrossVal Score :: ", mul_lr_score
-    print "Sag Multinomial Regression mean :: ", lr_score.mean()
-    print "Multinomial Regression mean :: ", mul_lr_score.mean()
-    print "Saga Multinomial Regression mean :: ", mul_lr3_score.mean()
-    print "LBFGS Multinomial Regression mean :: ", mul_lr4_score.mean()
+	# newton_lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2)
+	# lib_linear_lr = linear_model.LogisticRegression(n_jobs=2)
+	# mul_lr1 = linear_model.LogisticRegression(multi_class='multinomial', solver='sag', n_jobs=2)
+	# mul_lr2 = linear_model.LogisticRegression(multi_class='multinomial', solver='newton-cg', n_jobs=2)
+	# mul_lr3 = linear_model.LogisticRegression(multi_class='multinomial', solver='saga', n_jobs=2)
+	mul_lr4 = linear_model.LogisticRegression(multi_class='multinomial', solver='lbfgs', n_jobs=2)
+	# newton_lr_score = cross_val_score(newton_lr, data_train[:,1:], data_train[:,0], cv=10)
+	# lib_lr_score = cross_val_score(lib_linear_lr, data_train[:,1:], data_train[:,0], cv=10)
+	# mul_lr1_score = cross_val_score(mul_lr1, data_train[:,1:], data_train[:,0], cv=10)
+	# mul_lr2_score = cross_val_score(mul_lr2, data_train[:,1:], data_train[:,0], cv=10)
+	# mul_lr3_score = cross_val_score(mul_lr3, data_train[:,1:], data_train[:,0], cv=10)
+	mul_lr4_score = cross_val_score(mul_lr4, data_train[:,1:], data_train[:,0], cv=10)
+	# print "Newton Linear Regression mean :: ", newton_lr_score.mean()
+	# print "Lib Linear Regression mean :: ", lib_lr_score.mean()
+	# print "Sag Multinomial Regression mean :: ", mul_lr1_score.mean()
+	# print "Multinomial Regression mean :: ", mul_lr2_score.mean()
+	# print "Saga Multinomial Regression mean :: ", mul_lr3_score.mean()
+	print "LBFGS Multinomial Regression mean :: ", mul_lr4_score.mean()
 
 if __name__ == '__main__':
 	data_train = process_words()

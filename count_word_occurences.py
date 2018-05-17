@@ -9,7 +9,7 @@ def count_word_occurences(start, end):
         cursor = conn.cursor(buffered=True)
         cursor.execute("TRUNCATE dictionary")
         classes = [1, 2, 3, 4, 5, 6]
-        spinner = PieSpinner("Counting Word Occurences ")
+        spinner = PieSpinner("\nCounting Word Occurences ") 
         for target in classes:
             if start == 1:
                 cursor.execute("SELECT class, sentence FROM data3 WHERE class=%(target)s and id > %(id_target)s", {'target': target, 'id_target': end})

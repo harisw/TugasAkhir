@@ -21,7 +21,7 @@ def process_with_fetch():
 
         for item in row:
             #Removing punctuation and special char
-            newstring = item[2].lower()
+            newstring = item[2]
             newstring = re.sub('[^A-Za-z0-9 ]+', '', newstring)
             #Removing digit
             # newstring = ' '.join(newstring.strip(string.punctuation) for word in newstring.split())
@@ -36,10 +36,14 @@ def process_with_fetch():
             last_string = ""
             other_noises = ['st', 'nd', 'rd', 'th', 'one', 'two',
                              'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'second', 'seconds', 'minute',
-                               'minutes', 'hour', 'hours', 'days', 'month', 'year']
+                               'minutes', 'hour', 'hours', 'days', 'month', 'year', 'ois', 'etc', 'may', 'uni', 'PUC', 'yet',
+                               'sri', 'Cou', 'iii', 'fot', 'Bsc', 'Msc', 'UGC', 'ive', 'ano', 'itd', 'usa', 'itd', 'Nev', 'Mai',
+                               'SSC', 'ist', 'ger', 'HSC', 'hed', 'ufa', 'IMF', 'UCB', 'VSP', 'IMC', 'eng', 'SYC', 'IAM', 'USC',
+                               'BBQ', 'ICC', 'TBA', 'GPA', 'sima', 'Magda', 'andor', 'ter', 'many', 'thus', 'seem', 'LBHS', 'MSCE']
             exception_word = ['go', 'ok']
             lmtzr = WordNetLemmatizer()     
             for w in word_tokens:
+                w = w.lower()
                 check = False
                 w = spell(w)
                 temp = lmtzr.lemmatize(w, 'a')
@@ -56,7 +60,8 @@ def process_with_fetch():
                     last_string += " "+ w
                 elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
-            result = cursor.execute(" UPDATE data_maxentropy SET sentence=%s WHERE id=%s ",(last_string, item[0]))
+            print last_string
+            result = cursor.execute(" UPDATE data3 SET sentence=%s WHERE id=%s ",(last_string, item[0]))
 
     except Error as e:
         print(e)
