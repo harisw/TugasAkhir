@@ -100,7 +100,7 @@ am shut up in my appartment.  Nothing happens in particular a
 because there is no time for anything else. || 
 disgust  When one learns through the mass media all the wars and killing a
 going on in the world. || 
-shame  I lied, to be precise I cancelled a meeting with a good friend. || None None None None None None None None None None None None benevolence None None 
+shame  I lied, to be precise I cancelled a meeting with a good friend. || None None None None None None None None None None None None benevolence None None [CORRECT]
 joy  When I was accepted for a course on finance and accounting. || 
 fear  A bus drove over my right leg.  The event itself was not very a
 frightening but when I had to wait in the emergency ward for a
@@ -113,7 +113,7 @@ in the kitchen.  I was going to clean it when I found that the a
 drum was full of mud and slime.  I felt disgusted. || None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None None disgust None 
 shame  My elder brother and I have not always had a good relationship a
 and I feel ashamed of myself as I do not call him to talk to him a
-nowadays. || None None None None None None None None None None benevolence None None None None None shame None None None None None None None None None None None None None None None 
+nowadays. || None None None None None None None None None None benevolence None None None None None shame None None None None None None None None None None None None None None None [CORRECT] 
 joy  Passed an exam by 2 points. || 
 fear  In a cottage in a large forest, I was alone for a while in the a
 dark. || 
@@ -144,7 +144,7 @@ shame  When my friend and I were discussing the good looks of a guy we a
 realized that he had been listening. || None None None None None None None None benevolence None None None None None None None None None None None None None 
 joy  At a friend's birthday party with some of my closest friends.  It a
 was all very pleasant and one could say that I was happy to have a
-such good friends. || None None None None None None None None None None closeness None None None None None None None None None None None None None None None happiness None None None None benevolence None None 
+such good friends. || None None None None None None None None None None closeness None None None None None None None None None None None None None None None happiness None None None None benevolence None none [CORRECT] 
 fear  On the way home one Friday night in the heavy rain the car a
 acquaplanned.  I lost contact with the road surface for a few a
 seconds. || 
