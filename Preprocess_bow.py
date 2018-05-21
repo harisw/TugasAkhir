@@ -9,16 +9,20 @@ import sys
 from unidecode import unidecode
 import string
 from autocorrect import spell
+from progress.bar import FillingCirclesBar as fcb
 
-def process_with_fetch():
+def preprocess():
     try:
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute(" SELECT * FROM data3")
+        cursor.execute("TRUNCATE preprocessed_data")
+        cursor.execute("SELECT * FROM cleaned_data_original")
         row = cursor.fetchall()
         # print("masuk")
-
+        stop_words = set(stopwords.words('english'))
+        print len(row)
+        pb = fcb("Preprocessing words ", max=len(row))
         for item in row:
             #Removing punctuation and special char
             newstring = item[2]
@@ -60,9 +64,22 @@ def process_with_fetch():
                     last_string += " "+ w
                 elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
-            print last_string
-            result = cursor.execute(" UPDATE data3 SET sentence=%s WHERE id=%s ",(last_string, item[0]))
-
+            if item[1] == "joy":
+                new_class = 1
+            elif item[1] == "fear":
+                new_class = 2
+            elif item[1] == "anger":
+                new_class = 3
+            elif item[1] == "sadness":
+                new_class = 4
+            elif item[1] == "disgust":
+                new_class = 5
+            elif item[1] == "shame":
+                new_class = 6
+            cursor.execute("INSERT INTO preprocessed_data VALUES(%s, %s, %s) ", (item[0], new_class, last_string))
+            pb.next()
+            # result = cursor.execute(" UPDATE data3 SET sentence=%s WHERE id=%s ",(last_string, item[0]))
+        pb.finish()
     except Error as e:
         print(e)
 
@@ -70,7 +87,3 @@ def process_with_fetch():
         conn.commit()
         cursor.close()
         conn.close()
-
-if __name__ == '__main__':
-    stop_words = set(stopwords.words('english'))
-    process_with_fetch()

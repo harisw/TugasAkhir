@@ -14,57 +14,103 @@ from collections import defaultdict
 from nltk.corpus import wordnet as wn
 import treetaggerwrapper
 from progress.bar import FillingCirclesBar as fcb
+import numpy as np
 
-def process_with_fetch():
-    try:
-        dbconfig = read_db_config()
-        conn = MySQLConnection(**dbconfig)
+def predict(target_id):
+    try: 
+        dbconfig = read_db_config() 
+        conn = MySQLConnection(**dbconfig) 
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM cleaned_data_original")
-        row = cursor.fetchall()
+        cursor.execute("SELECT * FROM cleaned_data_original where id = %(target)s", {'target': str(target_id)})
+        query_res = cursor.fetchone()
+        sentence = query_res[2]
         tt = TreeTagger(TAGLANG='en')
         english_parser = StanfordParser('knowledge_based/stanford-parser.jar', 'knowledge_based/stanford-parser-3.9.1-models.jar')
         st = nerTagger('knowledge_based/classifiers/english.muc.7class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
         wna = WNAffect('knowledge_based/wordnet1.6/', 'knowledge_based/wordnetAffect/')
-        true_item = 0
-        for item in row:
-            print(item[0])
-            sentence = item[2]
-            tags = tt.tag_text(sentence)
-            tags = treetaggerwrapper.make_tags(tags)
-            parser_result = english_parser.raw_parse(sentence) 
-            ner_result = st.tag(word_tokenize(sentence))
-            emotions = ""
-            check = 0
-            check_emo = 0
-            # print tags
-            for word in tags:
-                emo = wna.get_emotion(word[0], word[1])
-                emotions += str(emo) + " "
-                if emo == item[1]:
-                    if check == 0:
-                        check = 1
-                        true_item += 1
-                if check_emo == 0 and emo != None:
+
+        tags = tt.tag_text(sentence)
+        tags = treetaggerwrapper.make_tags(tags)
+        parser_result = english_parser.raw_parse(sentence) 
+        ner_result = st.tag(word_tokenize(sentence))
+        emotions = ""
+        check = 0
+        check_emo = 0
+
+        emotion_map = mapEmotions()
+        score_table = np.zeros([2, 7], dtype=int)
+
+        for i in range(0, 7):
+            score_table[0][i] = i
+        for word in tags:
+            emo = wna.get_emotion(word[0], word[1])
+            if emo != None:
+                if check_emo == 0:
                     check_emo = 1
-            with open('knowledge_based_result.txt', 'a') as target_file:
-                target_file.write(item[1])
-                target_file.write("  ")
-                target_file.write(unidecode(item[2]))
-                target_file.write(" || ")
-                if check_emo == 1:
-                    target_file.write(emotions)
-                target_file.write("\n")
-        accuracy = float(true_item) / float(len(row))
-        print("\nAccuracy : {0:.4f}".format(accuracy))
-
-    except Error as e:
+                result = lookUp(str(emo), emotion_map)
+                if result != 0:
+                    score_table[result][1] += 1
+        # print emotion_map
+        if check_emo != 0:
+            result_index = np.unravel_index(np.argmax(score_table[1], axis=None), score_table[1].shape)
+            return result_index[0]
+        else:
+            return 0
+    except Error as e: 
         print(e)
-
-    finally:
-        conn.commit()
-        cursor.close()
+    finally: 
+        conn.commit() 
+        cursor.close() 
         conn.close()
 
-if __name__ == '__main__':
-	process_with_fetch()
+def lookUp(emotion, mymap):
+    if emotion in mymap["joy"]:
+        return 1
+    elif emotion in mymap["fear"]:
+        return 2
+    elif emotion in mymap["anger"]:
+        return 3
+    elif emotion in mymap["sadness"]:
+        return 4
+    elif emotion in mymap["disgust"]:
+        return 5
+    elif emotion in mymap["shame"]:
+        return 6
+    else:
+        return 0
+def mapEmotions():
+    emotions = {}
+    with open('joy_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["joy"] = mapping
+    with open('fear_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["fear"] = mapping
+    with open('anger_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["anger"] = mapping
+    with open('sadness_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["sadness"] = mapping
+    with open('disgust_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["disgust"] = mapping
+    with open('shame_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["shame"] = mapping
+    return emotions
+
+def findMax(emotion_counter):
+    curr_max = 0
+    result = 0
+    for i in range(0,7):
+        if emotion_counter[i] > curr_max:
+            result = i
+            curr_max = emotion_counter[i]
+    return result

@@ -17,3 +17,4 @@
 "3737"	"anger"	"[ No description.]"
 "4339"	"disgust"	"The same as in SHAME."
 "4392"	"shame"	"[ Never felt the emotion.]"
+"34"	"shame"	"[ Same as above - friends who torture animals.]"
