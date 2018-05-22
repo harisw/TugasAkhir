@@ -40,17 +40,21 @@ def predict(target_id):
         emotion_map = mapEmotions()
         emotion_score = np.zeros([2, 7], dtype=int)
 
+        emotion_list = ""
         for i in range(0, 7):
             emotion_score[0][i] = i
         for word in tags:
             emo = wna.get_emotion(word[0], word[1])
             if emo != None:
+                emotion_list += str(emo)+" "
                 if check_emo == 0:
                     check_emo = 1
                 result = lookUp(str(emo), emotion_map)
                 if result != 0:
-                    emotion_score[result][1] += 1
+                    emotion_score[1][result] += 1
         # print emotion_map
+        with open('ensemble_result.txt', 'a') as kb_file:
+            kb_file.write("knowledge_based "+emotion_list)
         if check_emo != 0:
             result_index = np.unravel_index(np.argmax(emotion_score[1], axis=None), emotion_score[1].shape)
             return result_index[0]
