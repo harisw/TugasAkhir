@@ -38,10 +38,10 @@ def predict(target_id):
         check_emo = 0
 
         emotion_map = mapEmotions()
-        score_table = np.zeros([2, 7], dtype=int)
+        emotion_score = np.zeros([2, 7], dtype=int)
 
         for i in range(0, 7):
-            score_table[0][i] = i
+            emotion_score[0][i] = i
         for word in tags:
             emo = wna.get_emotion(word[0], word[1])
             if emo != None:
@@ -49,10 +49,10 @@ def predict(target_id):
                     check_emo = 1
                 result = lookUp(str(emo), emotion_map)
                 if result != 0:
-                    score_table[result][1] += 1
+                    emotion_score[result][1] += 1
         # print emotion_map
         if check_emo != 0:
-            result_index = np.unravel_index(np.argmax(score_table[1], axis=None), score_table[1].shape)
+            result_index = np.unravel_index(np.argmax(emotion_score[1], axis=None), emotion_score[1].shape)
             return result_index[0]
         else:
             return 0

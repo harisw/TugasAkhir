@@ -25,17 +25,22 @@ def preprocess():
         pb = fcb("Preprocessing words ", max=len(row))
         for item in row:
             #Removing punctuation and special char
-            newstring = item[2]
+            # print item[2]
+            newstring = item[2].lower()
+            # print newstring
             newstring = re.sub('[^A-Za-z0-9 ]+', '', newstring)
             #Removing digit
             # newstring = ' '.join(newstring.strip(string.punctuation) for word in newstring.split())
+            # print newstring
             newstring = re.sub('\d+', '', newstring)
             newstring = unidecode(newstring)
+            # print newstring
             #Lowercasing
             # Tokenizing
             word_tokens = word_tokenize(newstring)
+            # print word_tokens
             filtered_sentence = [w for w in word_tokens if not w in stop_words] 
-            
+            # print filtered_sentence
             filtered_sentence = []
             last_string = ""
             other_noises = ['st', 'nd', 'rd', 'th', 'one', 'two',
@@ -64,6 +69,7 @@ def preprocess():
                     last_string += " "+ w
                 elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
+            # print last_string
             if item[1] == "joy":
                 new_class = 1
             elif item[1] == "fear":

@@ -1,0 +1,53 @@
+
+alpha :: 1
+BernoulliNB Crossvalidation Accuracy :: 0.615007799721
+alpha :: 0.5
+BernoulliNB Crossvalidation Accuracy :: 0.615159450678
+alpha :: 0.25
+BernoulliNB Crossvalidation Accuracy :: 0.605180337535
+alpha :: 0.1
+BernoulliNB Crossvalidation Accuracy :: 0.593335432237
+alpha :: 0.05
+BernoulliNB Crossvalidation Accuracy :: 0.583205388141
+alpha :: 0.025
+BernoulliNB Crossvalidation Accuracy :: 0.573226281154
+alpha :: 0.01
+BernoulliNB Crossvalidation Accuracy :: 0.559662432661
+alpha :: 0.005
+BernoulliNB Crossvalidation Accuracy :: 0.548439865718
+alpha :: 0.0025
+BernoulliNB Crossvalidation Accuracy :: 0.541593686659
+alpha :: 0.001
+BernoulliNB Crossvalidation Accuracy :: 0.534899875559
+alpha :: 0.0005
+BernoulliNB Crossvalidation Accuracy :: 0.533182120911
+alpha :: 0.00025
+BernoulliNB Crossvalidation Accuracy :: 0.532866967471
+alpha :: 0.0001
+BernoulliNB Crossvalidation Accuracy :: 0.531616483681
+alpha :: 1
+BernoulliNB Training Accuracy :: 0.783198254364
+alpha :: 0.5
+BernoulliNB Training Accuracy :: 0.804706982544
+alpha :: 0.25
+BernoulliNB Training Accuracy :: 0.824812967581
+alpha :: 0.1
+BernoulliNB Training Accuracy :: 0.837749376559
+alpha :: 0.05
+BernoulliNB Training Accuracy :: 0.845854114713
+alpha :: 0.025
+BernoulliNB Training Accuracy :: 0.849127182045
+alpha :: 0.01
+BernoulliNB Training Accuracy :: 0.850997506234
+alpha :: 0.005
+BernoulliNB Training Accuracy :: 0.852244389027
+alpha :: 0.0025
+BernoulliNB Training Accuracy :: 0.852867830424
+alpha :: 0.001
+BernoulliNB Training Accuracy :: 0.853958852868
+alpha :: 0.0005
+BernoulliNB Training Accuracy :: 0.854270573566
+alpha :: 0.00025
+BernoulliNB Training Accuracy :: 0.854738154613
+alpha :: 0.0001
+BernoulliNB Training Accuracy :: 0.854894014963
