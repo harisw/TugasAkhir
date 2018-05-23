@@ -25,7 +25,7 @@ def process_words():
 		cursor.execute("SELECT * FROM dictionary_maxentropy")
 		words = cursor.fetchall()
 
-		cursor.execute("SELECT * FROM preprocessed_data")
+		cursor.execute("SELECT * FROM preprocessed_data where id < 15")
 		data_train = cursor.fetchall()
 		bar = IncrementalBar('Processing Words', max=len(data_train))
 		train_bow = np.zeros((len(data_train), len(words)+2), dtype=int)
@@ -55,8 +55,8 @@ def process_words():
 def classifying():
 	# mnb = MultinomialNB()
 	bow_vector = process_words()
-	data_train = bow_vector[:6000]
-	data_test = bow_vector[6001:, :]
+	data_train = bow_vector[:5]
+	data_test = bow_vector[6:, :]
 	bnb = BernoulliNB(alpha=0.5).fit(data_train[:,2:], data_train[:, 0])
 	newton_lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2).fit(data_train[:, 2:], data_train[:, 0])
 
@@ -64,6 +64,7 @@ def classifying():
 	true_number = 0
 	total_number = len(data_test)
 	total_number = 2
+	equal_res = False
 	for item in data_test:
 		print item[1]
 		score_table = np.zeros([2, 7], dtype=int)
@@ -79,12 +80,14 @@ def classifying():
 			score_table[1][kb_result] += 1
 
 		predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
+		if score_table[1][predicted[1]] == 1:
+			predicted[1] = nb_result
 		if predicted[1] == item[0]:
 			true_number += 1
 		with open('ensemble_result.txt', 'a') as file:
-			file.write("  "+str(item[0]))
-			file.write(" || ")
-			file.write(str(score_table))
+			file.write("Real :: "+str(item[0]))
+			file.write(" || Prediction :: ")
+			file.write(str(predicted[1]))
 			file.write("\n")
 			file.write("END RESULT\n")
 	print "\nAccuracy :: ", (float(true_number)/float(total_number))
