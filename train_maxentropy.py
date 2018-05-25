@@ -5,7 +5,6 @@ from sklearn import linear_model
 from sklearn import metrics
 from sklearn.model_selection import cross_val_score
 from progress.bar import IncrementalBar
-# from sklearn.cross_validation import train_test_split
 import pandas as pd
 import numpy as np
 from sklearn.naive_bayes import GaussianNB
@@ -27,6 +26,7 @@ def process_words():
 
 		cursor.execute("SELECT * FROM preprocessed_data")
 		data_train = cursor.fetchall()
+
 		bar = IncrementalBar('Processing Words', max=len(data_train))
 		train_bow = np.zeros((len(data_train), len(words)+2), dtype=int)
 
@@ -50,108 +50,66 @@ def process_words():
 		conn.commit()
 		cursor.close()
 		conn.close()
-		return train_bow
+		return train_bow, len(words)
 
 def classifying():
-	# mnb = MultinomialNB()
-	bow_vector = process_words()
-	data_train = bow_vector
-	# data_test = bow_vector[6001:, :]
-	# bnb = BernoulliNB(alpha=0.01).fit(data_train[:,2:], data_train[:, 0])
-	# newton_lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2).fit(data_train[:, 2:], data_train[:, 0])
-	# a = 0.01
-	alphas = [1, 0.5, 0.25, 0.1, 0.05, 0.025, 0.01, 0.005, 0.0025, 0.001]
-	# newton_lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2).fit(data_train[:, 2:], data_train[:, 0])
-	# newton_lr_score = accuracy_score(newton_lr.predict(data_train[:,2:]), data_train[:,0])
-	# for i in range(0,10):
-	alphas = [0.0005, 0.00025, 0.0001]
-	for a in alphas:
-		bnb = BernoulliNB(alpha=a)
-		# bnb_score = accuracy_score(bnb.predict(data_train[:,2:]), data_train[:, 0])
-		bnb_score = cross_val_score(bnb, data_train[:,2:], data_train[:, 0], cv=10, verbose=1)
-		with open('learning_result.txt', 'a') as file:
-			file.write("\nalpha :: "+ str(a))
-			file.write("\nBernoulliNB Crossvalidation Accuracy :: "+ str(bnb_score.mean()))
+	bow_vector, words_num = process_words()
 
-	alphas = [1, 0.5, 0.25, 0.1, 0.05, 0.025, 0.01, 0.005, 0.0025, 0.001, 0.0005, 0.00025, 0.0001]
-	for a in alphas:
-		bnb = BernoulliNB(alpha=a).fit(data_train[:,2:], data_train[:, 0])
-		bnb_score = accuracy_score(bnb.predict(data_train[:,2:]), data_train[:, 0])
-		# bnb_score = cross_val_score(bnb, data_train[:,2:], data_train[:, 0], cv=10, verbose=1)
-		with open('learning_result.txt', 'a') as file:
-			file.write("\nalpha :: "+ str(a))
-			file.write("\nBernoulliNB Training Accuracy :: "+ str(bnb_score.mean()))
-		# print "\nalpha :: ", a
-		# print "\nBernoulliNB Train Accuracy :: ", bnb_score.mean()
-	# newton_lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2)
-	# print data_train[2]
-	# bnb_score = cross_val_score(bnb, data_train[:,2:], data_train[:, 0], cv=10, verbose=1)
-	# nlr_score = cross_val_score(newton_lr, data_train[:,2:], data_train[:, 0], cv=10, verbose=1)
-	# print "\nNewton LR Train Accuracy :: ", nlr_score
+	#RESHUFFLING DATA
+	with open('alternative_change.txt', 'r') as file:
+		outliers = file.readlines()
 
-	# mnb_score = cross_val_score(mnb, data_train[:,1:], data_train[:, 0], cv=10, verbose=1)
-	# TESTING PHASE
-	# true_number = 0
-	# total_number = len(data_test)
-	# total_number = 2
-	# progressbar = fcb("Testing Data ", max=total_number)
-	# for item in data_test:
-	# 	print item[1]
-	# 	score_table = np.zeros([2, 7], dtype=int)
-	# 	for i in range(0, 7):
-	# 		score_table[0][i] = i
-	# 	nb_result = bnb.predict([item[2:]])
-	# 	lr_result = newton_lr.predict([item[2:]])
-	# 	kb_result = kb.predict(item[1])
+	data_train = []
+	data_test = []
+	count = 0
+	pb = fcb('Reshuffling data ', max=len(bow_vector))
 
-	# 	score_table[1][nb_result] += 1
-	# 	score_table[1][lr_result] += 1
-	# 	score_table[1][kb_result] += 1
+	for item in bow_vector:
+		if count < 6000:
+			if item[1] < 170 and item[1] > 140:
+				data_test.append(item)
+			else:
+				data_train.append(item)
+		else:
+			if item[1] in outliers:
+				data_train.append(item)
+			else:
+				data_test.append(item)
+		count += 1
+		pb.next()
+	pb.finish()
 
-	# 	predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
-	# 	if predicted[1] == item[0]:
-	# 		true_number += 1
-	# 	with open('ensemble_result.txt', 'w') as file:
-	# 		file.write(str(item[0]))
-	# 		file.write(" || ")
-	# 		file.write(str(score_table))
-	# 		file.write("\n")
-	# 		file.write("END RESULT\n")
-	# 	progressbar.next()
-	# progressbar.finish()
-	# print "\nAccuracy :: ", (float(true_number)/float(total_number))
+	data_train = np.array(data_train)
+	data_test = np.array(data_test)
+
+	print len(data_train)
+	print len(data_test)
+	# bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
+	true_nb = 0
+	true_lr = 0
+	total_test = 0
+	progressbar = fcb('Testing Process', max=len(data_test))
+	for item in data_test:
+		if str(item[1]) != '0':
+			# print "Real :: ", item[0]
+			# print "\n ID :: ", item[1]
+			total_test += 1
+			# result = bnb.predict([item[2:]])
+			result_lr = lr.predict([item[2:]])
+			# if item[0] == result:
+			# 	true_nb += 1
+			if item[0] == result_lr:
+				true_lr += 1
+			else:
+				with open('learning_LR_result.txt', 'a') as file:
+					file.write("\n ID :: "+ str(item[1]))
+					file.write(" :: Real "+ str(item[0]))
+					file.write(" :: Predicted"+ str(result_lr))
+		progressbar.next()
+	progressbar.finish()
+	# print "\n True :: ", true_num
+	# print "\n from :: ", total_test
+	# print "\nAccuracy NB:: ", (float(true_nb) / float(total_test))
+	print "\nAccuracy NB:: ", (float(true_lr) / float(total_test))
 	return
-	# mnb_nonfit = MultinomialNB(fit_prior=False)
-	# bnb_nonfit = BernoulliNB(fit_prior=False)
-	# mnb_score = cross_val_score(mnb, data_train[:,1:], data_train[:, 0], cv=10, verbose=1)
-	# bnb_score = cross_val_score(bnb, data_train[:,1:], data_train[:, 0], cv=10, verbose=1)
-	# mnb_score_nonfit = cross_val_score(mnb_nonfit, data_train[:,1:], data_train[:, 0], cv=10, verbose=1)
-	# bnb_score_nonfit = cross_val_score(bnb_nonfit, data_train[:,1:], data_train[:, 0], cv=10, verbose=1)
-	# print "\nMultinomialNB mean :: ", mnb_score.mean()
-	# print "\nBernoulliNB mean :: ", bnb_score.mean()
-	# print "\nMultinomialNB NonFit mean :: ", mnb_score_nonfit.mean()
-	# print "\nBernoulliNB NonFit mean :: ", bnb_score_nonfit.mean()
-	# y_pred = gnb.fit(iris.data, iris.target).predict(iris.data)
-	# print("Number of mislabeled points out of a total %d points : %d"% (iris.data.shape[0],(iris.target != y_pred).sum()))
-	# newton_lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2)
-	# lib_linear_lr = linear_model.LogisticRegression(n_jobs=2)
-	# mul_lr1 = linear_model.LogisticRegression(multi_class='multinomial', solver='sag', n_jobs=2)
-	# mul_lr2 = linear_model.LogisticRegression(multi_class='multinomial', solver='newton-cg', n_jobs=2)
-	# mul_lr3 = linear_model.LogisticRegression(multi_class='multinomial', solver='saga', n_jobs=2)
-	# mul_lr4 = linear_model.LogisticRegression(multi_class='multinomial', solver='lbfgs', n_jobs=2)
-	# newton_lr_score = cross_val_score(newton_lr, data_train[:,1:], data_train[:,0], cv=10)
-	# lib_lr_score = cross_val_score(lib_linear_lr, data_train[:,1:], data_train[:,0], cv=10)
-	# mul_lr1_score = cross_val_score(mul_lr1, data_train[:,1:], data_train[:,0], cv=10)
-	# mul_lr2_score = cross_val_score(mul_lr2, data_train[:,1:], data_train[:,0], cv=10)
-	# mul_lr3_score = cross_val_score(mul_lr3, data_train[:,1:], data_train[:,0], cv=10)
-	# mul_lr4_score = cross_val_score(mul_lr4, data_train[:,1:], data_train[:,0], cv=10)
-	# print "Newton Linear Regression mean :: ", newton_lr_score.mean()
-	# print "Lib Linear Regression mean :: ", lib_lr_score.mean()
-	# print "Sag Multinomial Regression mean :: ", mul_lr1_score.mean()
-	# print "Multinomial Regression mean :: ", mul_lr2_score.mean()
-	# print "Saga Multinomial Regression mean :: ", mul_lr3_score.mean()
-	# print "LBFGS Multinomial Regression mean :: ", mul_lr4_score.mean()
-
-# if __name__ == '__main__':
-# 	data_train = process_words()
-# 	train_classifier(data_train)

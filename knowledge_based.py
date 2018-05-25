@@ -26,7 +26,7 @@ def predict(target_id):
         sentence = query_res[2]
         tt = TreeTagger(TAGLANG='en')
         english_parser = StanfordParser('knowledge_based/stanford-parser.jar', 'knowledge_based/stanford-parser-3.9.1-models.jar')
-        st = nerTagger('knowledge_based/classifiers/english.muc.7class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
+        st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
         wna = WNAffect('knowledge_based/wordnet1.6/', 'knowledge_based/wordnetAffect/')
 
         tags = tt.tag_text(sentence)

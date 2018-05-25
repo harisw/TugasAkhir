@@ -20,7 +20,7 @@ def registerBow():
 			for w in words:
 				if w not in word_list:
 					word_list.append(w)
-					print(w)
+					# print(w)
 					cursor.execute("INSERT INTO dictionary_maxentropy (word) VALUE(%(myword)s)", {'myword': w })
 	except Exception as e:
 		print(e)

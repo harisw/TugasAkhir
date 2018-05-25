@@ -10,6 +10,7 @@ from unidecode import unidecode
 import string
 from autocorrect import spell
 from progress.bar import FillingCirclesBar as fcb
+from nltk.tag import StanfordNERTagger as nerTagger
 
 def preprocess():
     try:
@@ -19,30 +20,27 @@ def preprocess():
         cursor.execute("TRUNCATE preprocessed_data")
         cursor.execute("SELECT * FROM cleaned_data_original")
         row = cursor.fetchall()
-        # print("masuk")
         stop_words = set(stopwords.words('english'))
-        print len(row)
+        st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
+        new_stopwords = getStopwords()
         pb = fcb("Preprocessing words ", max=len(row))
         for item in row:
+            # print item[0]
             #Removing punctuation and special char
-            # print item[2]
             newstring = item[2].lower()
-            # print newstring
             newstring = re.sub('[^A-Za-z0-9 ]+', '', newstring)
             #Removing digit
-            # newstring = ' '.join(newstring.strip(string.punctuation) for word in newstring.split())
-            # print newstring
             newstring = re.sub('\d+', '', newstring)
             newstring = unidecode(newstring)
-            # print newstring
-            #Lowercasing
-            # Tokenizing
             word_tokens = word_tokenize(newstring)
-            # print word_tokens
-            filtered_sentence = [w for w in word_tokens if not w in stop_words] 
-            # print filtered_sentence
-            filtered_sentence = []
+            # filtered_sentence = [w for w in word_tokens if not w in stop_words] 
+            # filtered_sentence = []
             last_string = ""
+            # other_noises = ['st', 'nd', 'rd', 'th', 'one', 'two',
+            #                  'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'second', 'seconds', 'minute',
+            #                    'minutes', 'hour', 'hours', 'days', 'month', 'year', 'ois', 'etc', 'may', 'uni', 'PUC', 'yet',
+            #                    'sri', 'Cou', 'fot','ive', 'ano', 'itd', 'usa', 'itd', 'Nev', 'Mai',
+            #                    'ist', 'ger', 'hed', 'ufa']
             other_noises = ['st', 'nd', 'rd', 'th', 'one', 'two',
                              'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'second', 'seconds', 'minute',
                                'minutes', 'hour', 'hours', 'days', 'month', 'year', 'ois', 'etc', 'may', 'uni', 'PUC', 'yet',
@@ -55,6 +53,8 @@ def preprocess():
                 w = w.lower()
                 check = False
                 w = spell(w)
+                # ner_check = st.tag([w])
+                # if ner_check[0][1] == 'O':
                 temp = lmtzr.lemmatize(w, 'a')
                 if(temp != w):
                     check = True
@@ -65,9 +65,9 @@ def preprocess():
                     if(not check):
                         temp = lmtzr.lemmatize(w)
                 w = temp
-                if w not in stop_words and w not in other_noises and len(w) > 2:
+                if w not in stop_words and w not in new_stopwords and len(w) > 2:
                     last_string += " "+ w
-                elif w not in stop_words and w not in other_noises and len(w) == 2 and w in exception_word:
+                elif w not in stop_words and w not in new_stopwords and len(w) == 2 and w in exception_word:
                     last_string += " "+ w
             # print last_string
             if item[1] == "joy":
@@ -84,7 +84,6 @@ def preprocess():
                 new_class = 6
             cursor.execute("INSERT INTO preprocessed_data VALUES(%s, %s, %s) ", (item[0], new_class, last_string))
             pb.next()
-            # result = cursor.execute(" UPDATE data3 SET sentence=%s WHERE id=%s ",(last_string, item[0]))
         pb.finish()
     except Error as e:
         print(e)
@@ -93,3 +92,13 @@ def preprocess():
         conn.commit()
         cursor.close()
         conn.close()
+
+def getStopwords():
+    import glob
+    file_names = glob.glob("*.txt")
+    my_stopwords = []
+    for name in file_names:
+        with open(name, 'r') as file:
+            temp = file.readlines()
+        my_stopwords += temp
+    return my_stopwords
