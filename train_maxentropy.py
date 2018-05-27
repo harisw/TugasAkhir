@@ -55,60 +55,52 @@ def process_words():
 def classifying():
 	bow_vector, words_num = process_words()
 
-	#RESHUFFLING DATA
-	with open('alternative_change.txt', 'r') as file:
-		outliers = file.readlines()
-
-	data_train = []
-	data_test = []
-	count = 0
-	pb = fcb('Reshuffling data ', max=len(bow_vector))
-
-	for item in bow_vector:
-		if count < 6000:
-			if item[1] < 170 and item[1] > 140:
-				data_test.append(item)
-			else:
-				data_train.append(item)
+		#RESHUFFLING DATA
+	start = 0
+	step = 412
+	end = start + step
+	for i in range(0, 14):
+		if i == 0:
+			data_train = bow_vector[step:, :]
+			data_test = bow_vector[:end, :]
+		elif i == 13:
+			data_train = bow_vector[:start, :]
+			data_test = bow_vector[start:, :]
 		else:
-			if item[1] in outliers:
-				data_train.append(item)
-			else:
-				data_test.append(item)
-		count += 1
-		pb.next()
-	pb.finish()
-
-	data_train = np.array(data_train)
-	data_test = np.array(data_test)
-
-	print len(data_train)
-	print len(data_test)
-	bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
-	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
-	true_nb = 0
-	true_lr = 0
-	total_test = 0
-	progressbar = fcb('Testing Process', max=len(data_test))
-	for item in data_test:
-		if str(item[1]) != '0':
-			total_test += 1
-			result = bnb.predict([item[2:]])
-			result_lr = lr.predict([item[2:]])
-			if item[0] == result:
-				true_nb += 1
-			if item[0] == result_lr:
-				true_lr += 1
-			
-			if item[0] != result and item[0] != result_lr:
-				with open('learning_result.txt', 'a') as file:
-					file.write("\n ID :: "+ str(item[1]))
-					file.write(" :: Real "+ str(item[0]))
-					file.write(" :: Predicted"+ str(result_lr))
-		progressbar.next()
-	progressbar.finish()
-	print "\n True :: ", true_nb
-	print "\n from :: ", total_test
-	print "\nAccuracy NB:: ", (float(true_nb) / float(total_test))
-	print "\nAccuracy LR:: ", (float(true_lr) / float(total_test))
+			temp = bow_vector[:start, :]
+			data_train = bow_vector[end:, :]
+			data_train = np.concatenate((data_train, temp), axis=0)
+			data_test = bow_vector[start:end, :]
+		start += step
+		end += step
+		count = 0
+		print len(data_train)
+		print len(data_test)
+		bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+		lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
+		true_nb = 0
+		true_lr = 0
+		total_test = 0
+		progressbar = fcb('Testing Process', max=len(data_test))
+		for item in data_test:
+			if str(item[1]) != '0':
+				total_test += 1
+				result = bnb.predict([item[2:]])
+				result_lr = lr.predict([item[2:]])
+				if item[0] == result:
+					true_nb += 1
+				if item[0] == result_lr:
+					true_lr += 1
+				
+				if item[0] != result and item[0] != result_lr:
+					with open('learning_result.txt', 'a') as file:
+						file.write("\n ID :: "+ str(item[1]))
+						file.write(" :: Real "+ str(item[0]))
+						file.write(" :: Predicted"+ str(result_lr))
+			progressbar.next()
+		progressbar.finish()
+		print "\n True :: ", true_nb
+		print "\n from :: ", total_test
+		print "\nAccuracy NB:: ", (float(true_nb) / float(total_test))
+		print "\nAccuracy LR:: ", (float(true_lr) / float(total_test))
 	return

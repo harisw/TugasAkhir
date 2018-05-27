@@ -3,6 +3,6 @@ import train_maxentropy as tm
 from register_bow import registerBow
 
 if __name__ == '__main__':
-	preprocess()
-	registerBow()
+	# preprocess()
+	# registerBow()
 	tm.classifying()
