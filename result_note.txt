@@ -1,0 +1,12 @@
+5927 with autocorrect
+
+
+with other noises and without is same and have sentence that has 1 length
+Accuracy NB::  0.579545454545
+
+Accuracy LR::  0.661363636364
+
+have no sentence that has 1 length
+Accuracy NB::  0.594660194175
+
+Accuracy LR::  0.665048543689

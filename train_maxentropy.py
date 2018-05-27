@@ -84,7 +84,7 @@ def classifying():
 
 	print len(data_train)
 	print len(data_test)
-	# bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+	bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
 	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
 	true_nb = 0
 	true_lr = 0
@@ -92,24 +92,23 @@ def classifying():
 	progressbar = fcb('Testing Process', max=len(data_test))
 	for item in data_test:
 		if str(item[1]) != '0':
-			# print "Real :: ", item[0]
-			# print "\n ID :: ", item[1]
 			total_test += 1
-			# result = bnb.predict([item[2:]])
+			result = bnb.predict([item[2:]])
 			result_lr = lr.predict([item[2:]])
-			# if item[0] == result:
-			# 	true_nb += 1
+			if item[0] == result:
+				true_nb += 1
 			if item[0] == result_lr:
 				true_lr += 1
-			else:
-				with open('learning_LR_result.txt', 'a') as file:
+			
+			if item[0] != result and item[0] != result_lr:
+				with open('learning_result.txt', 'a') as file:
 					file.write("\n ID :: "+ str(item[1]))
 					file.write(" :: Real "+ str(item[0]))
 					file.write(" :: Predicted"+ str(result_lr))
 		progressbar.next()
 	progressbar.finish()
-	# print "\n True :: ", true_num
-	# print "\n from :: ", total_test
-	# print "\nAccuracy NB:: ", (float(true_nb) / float(total_test))
-	print "\nAccuracy NB:: ", (float(true_lr) / float(total_test))
+	print "\n True :: ", true_nb
+	print "\n from :: ", total_test
+	print "\nAccuracy NB:: ", (float(true_nb) / float(total_test))
+	print "\nAccuracy LR:: ", (float(true_lr) / float(total_test))
 	return
