@@ -28,16 +28,21 @@ def process_words():
 		data_train = cursor.fetchall()
 
 		bar = IncrementalBar('Processing Words', max=len(data_train))
-		train_bow = np.zeros((len(data_train), len(words)+2), dtype=int)
+		train_bow = np.zeros((len(data_train), len(words)+2), dtype=float)
 
 		index = 0
 		# FIRST COLUMN FOR CLASS, SECOND COLUMN FOR ID
 		for item in data_train:
 			sentence = word_tokenize(item[2])
+			list_id = []
 			for w in sentence:
-				cursor.execute("SELECT id FROM dictionary_maxentropy WHERE word=%(w)s", {"w": w})
+				cursor.execute("SELECT * FROM dictionary_maxentropy WHERE word=%(w)s", {"w": w})
 				result = cursor.fetchone()
 				train_bow[index][result[0]+2] += 1
+				if result[0] not in list_id:
+					list_id.append((result[0], result[2]))
+			for item_id in list_id:
+				train_bow[index][item_id[0]+2] = (train_bow[index][item_id[0]+2] / len(sentence)) * item_id[1] 
 			train_bow[index][0] = item[1]
 			train_bow[index][1] = item[0]
 			bar.next()
