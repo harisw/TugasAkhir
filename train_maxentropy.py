@@ -79,8 +79,6 @@ def classifying():
 		start += step
 		end += step
 		count = 0
-		print len(data_train)
-		print len(data_test)
 		bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
 		lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
 		true_nb = 0
