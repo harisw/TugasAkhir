@@ -22,7 +22,7 @@ def preprocess():
         cursor.execute("SELECT * FROM cleaned_data_original")
         row = cursor.fetchall()
         stop_words = set(stopwords.words('english'))
-        st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
+        # st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
         new_stopwords = getStopwords()
         #English checking
         eng_words = enchant.Dict("en_US")
