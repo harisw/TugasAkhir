@@ -28,7 +28,6 @@ def preprocess():
         eng_words = enchant.Dict("en_US")
         pb = fcb("Preprocessing words ", max=len(row))
         for item in row:
-            # print item[0]
             #Removing punctuation and special char
             newstring = item[2].lower()
             newstring = re.sub('[^A-Za-z0-9 ]+', '', newstring)
@@ -44,6 +43,7 @@ def preprocess():
                 w = w.lower()
                 check = False
                 w = spell(w)
+                #Using NERTagger to check it's entity
                 # ner_check = st.tag([w])
                 # if ner_check[0][1] == 'O':
                 temp = lmtzr.lemmatize(w, 'a')
