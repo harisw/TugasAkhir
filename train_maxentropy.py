@@ -13,6 +13,10 @@ from sklearn.naive_bayes import BernoulliNB
 import knowledge_based as kb
 from progress.bar import FillingCirclesBar as fcb
 from sklearn.metrics import accuracy_score
+from pprint import pprint
+
+start_test = 2472
+end_test = 2884
 
 def process_words():
 	try:
@@ -28,21 +32,16 @@ def process_words():
 		data_train = cursor.fetchall()
 
 		bar = IncrementalBar('Processing Words', max=len(data_train))
-		train_bow = np.zeros((len(data_train), len(words)+2), dtype=float)
+		train_bow = np.zeros((len(data_train), len(words)+2), dtype=int)
 
 		index = 0
 		# FIRST COLUMN FOR CLASS, SECOND COLUMN FOR ID
 		for item in data_train:
 			sentence = word_tokenize(item[2])
-			list_id = []
 			for w in sentence:
-				cursor.execute("SELECT * FROM dictionary_maxentropy WHERE word=%(w)s", {"w": w})
+				cursor.execute("SELECT id FROM dictionary_maxentropy WHERE word=%(w)s", {"w": w})
 				result = cursor.fetchone()
 				train_bow[index][result[0]+2] += 1
-				if result[0] not in list_id:
-					list_id.append((result[0], result[2]))
-			for item_id in list_id:
-				train_bow[index][item_id[0]+2] = (train_bow[index][item_id[0]+2] / len(sentence)) * item_id[1] 
 			train_bow[index][0] = item[1]
 			train_bow[index][1] = item[0]
 			bar.next()
@@ -60,52 +59,52 @@ def process_words():
 def classifying():
 	bow_vector, words_num = process_words()
 
-		#RESHUFFLING DATA
-	start = 0
-	step = 412
-	end = start + step
-	for i in range(0, 14):
-		if i == 0:
-			data_train = bow_vector[step:, :]
-			data_test = bow_vector[:end, :]
-		elif i == 13:
-			data_train = bow_vector[:start, :]
-			data_test = bow_vector[start:, :]
-		else:
-			temp = bow_vector[:start, :]
-			data_train = bow_vector[end:, :]
-			data_train = np.concatenate((data_train, temp), axis=0)
-			data_test = bow_vector[start:end, :]
-		start += step
-		end += step
-		count = 0
-		print len(data_train)
-		print len(data_test)
-		bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
-		lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
-		true_nb = 0
-		true_lr = 0
-		total_test = 0
-		progressbar = fcb('Testing Process', max=len(data_test))
-		for item in data_test:
-			if str(item[1]) != '0':
-				total_test += 1
-				result = bnb.predict([item[2:]])
-				result_lr = lr.predict([item[2:]])
-				if item[0] == result:
-					true_nb += 1
-				if item[0] == result_lr:
-					true_lr += 1
-				
-				if item[0] != result and item[0] != result_lr:
-					with open('learning_result.txt', 'a') as file:
-						file.write("\n ID :: "+ str(item[1]))
-						file.write(" :: Real "+ str(item[0]))
-						file.write(" :: Predicted"+ str(result_lr))
-			progressbar.next()
-		progressbar.finish()
-		print "\n True :: ", true_nb
-		print "\n from :: ", total_test
-		print "\nAccuracy NB:: ", (float(true_nb) / float(total_test))
-		print "\nAccuracy LR:: ", (float(true_lr) / float(total_test))
+	temp = bow_vector[:start_test, :]
+	data_train = bow_vector[end_test:, :]
+	data_train = np.concatenate((data_train, temp), axis=0)
+	data_test = bow_vector[start_test:end_test, :]
+	count = 0
+	bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
+	total_test = 0
+	true_number = 0
+	# progressbar = fcb('Testing Process', max=len(data_test))
+	for item in data_test:
+		score_table = np.zeros([2, 7], dtype=int)
+		if str(item[1]) != '0':
+			print item[1]
+			with open('ensemble_result.txt', 'a') as file:
+				file.write("\nBOW  ")
+				file.write(str(item[2:]))
+				file.write("\n END")
+			total_test += 1
+			result_nb = bnb.predict([item[2:]])
+			result_lr = lr.predict([item[2:]])
+			# result_kb = kb.predict(item[1])
+			print("\n nb :: ", result_nb)
+			print("\n lr :: ", result_lr)
+			if item[0] == result_nb or item[0] == result_lr:
+				true_number += 1
+			# print("\n kb :: ", result_kb)
+			score_table[1][result_nb] += 1 
+			score_table[1][result_lr] += 1 
+			# if result_kb != 0: 
+			# 	score_table[1][result_kb] += 1
+			# predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
+			# final_prediction = predicted[1]
+			# if score_table[1][predicted[1]] == 1: 
+			# 	final_prediction = result_nb 
+			# if final_prediction == item[0]: 
+			# 	true_number += 1
+
+			# if item[0] != final_prediction:
+			# 	with open('ensemble_result.txt', 'a') as file:
+			# 		file.write("\n ID :: "+ str(item[1]))
+			# 		file.write(" :: Real "+ str(item[0]))
+			# 		file.write(" :: Predicted "+ str(predicted[1]))
+	# 	progressbar.next()
+	# progressbar.finish()
+	print "\n True :: ", true_number
+	print "\n from :: ", total_test
+	print "\nAccuracy :: ", (float(true_number) / float(total_test))
 	return

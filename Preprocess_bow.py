@@ -19,7 +19,7 @@ def preprocess():
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
         cursor.execute("TRUNCATE preprocessed_data")
-        cursor.execute("SELECT * FROM cleaned_data_original")
+        cursor.execute("SELECT * FROM cleaned_data_original where id <= 300")
         row = cursor.fetchall()
         stop_words = set(stopwords.words('english'))
         # st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')

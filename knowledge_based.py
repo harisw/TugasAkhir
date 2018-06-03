@@ -49,7 +49,7 @@ def predict(target_id):
                     check_emo = 1
                 result = lookUp(str(emo), emotion_map)
                 if result != 0:
-                    emotion_score[result][1] += 1
+                    emotion_score[1][result] += 1
         # print emotion_map
         if check_emo != 0:
             result_index = np.unravel_index(np.argmax(emotion_score[1], axis=None), emotion_score[1].shape)
