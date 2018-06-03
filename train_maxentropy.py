@@ -68,42 +68,32 @@ def classifying():
 	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
 	total_test = 0
 	true_number = 0
-	# progressbar = fcb('Testing Process', max=len(data_test))
 	for item in data_test:
 		score_table = np.zeros([2, 7], dtype=int)
 		if str(item[1]) != '0':
 			print item[1]
-			with open('ensemble_result.txt', 'a') as file:
-				file.write("\nBOW  ")
-				file.write(str(item[2:]))
-				file.write("\n END")
 			total_test += 1
 			result_nb = bnb.predict([item[2:]])
 			result_lr = lr.predict([item[2:]])
-			# result_kb = kb.predict(item[1])
+			result_kb = kb.predict(item[1])
 			print("\n nb :: ", result_nb)
 			print("\n lr :: ", result_lr)
-			if item[0] == result_nb or item[0] == result_lr:
-				true_number += 1
-			# print("\n kb :: ", result_kb)
 			score_table[1][result_nb] += 1 
 			score_table[1][result_lr] += 1 
-			# if result_kb != 0: 
-			# 	score_table[1][result_kb] += 1
-			# predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
-			# final_prediction = predicted[1]
-			# if score_table[1][predicted[1]] == 1: 
-			# 	final_prediction = result_nb 
-			# if final_prediction == item[0]: 
-			# 	true_number += 1
+			if result_kb != 0: 
+				score_table[1][result_kb] += 1
+			predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
+			final_prediction = predicted[1]
+			if score_table[1][predicted[1]] == 1: 
+				final_prediction = result_nb 
+			if final_prediction == item[0]: 
+				true_number += 1
 
-			# if item[0] != final_prediction:
-			# 	with open('ensemble_result.txt', 'a') as file:
-			# 		file.write("\n ID :: "+ str(item[1]))
-			# 		file.write(" :: Real "+ str(item[0]))
-			# 		file.write(" :: Predicted "+ str(predicted[1]))
-	# 	progressbar.next()
-	# progressbar.finish()
+			if item[0] != final_prediction:
+				with open('ensemble_result.txt', 'a') as file:
+					file.write("\n ID :: "+ str(item[1]))
+					file.write(" :: Real "+ str(item[0]))
+					file.write(" :: Predicted "+ str(predicted[1]))
 	print "\n True :: ", true_number
 	print "\n from :: ", total_test
 	print "\nAccuracy :: ", (float(true_number) / float(total_test))
