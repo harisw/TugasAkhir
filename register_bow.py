@@ -2,7 +2,6 @@ from mysql.connector import MySQLConnection, Error
 from nltk.tokenize import word_tokenize
 from python_mysql_dbconfig import read_db_config
 from progress.bar import FillingSquaresBar as fsb
-from math import log
 
 def registerBow():
 	try:

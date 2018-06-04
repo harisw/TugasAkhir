@@ -1,18 +1,6 @@
 import xml.etree.ElementTree as ET
 from mysql.connector import MySQLConnection, Error
 from python_mysql_dbconfig import read_db_config
-from nltk.corpus import stopwords
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-import nltk
-import re
-import sys
-from unidecode import unidecode
-import string
-from autocorrect import spell
-from progress.bar import FillingCirclesBar as fcb
-from nltk.tag import StanfordNERTagger as nerTagger
-import enchant
 
 def prepareAffectiveText():
     try:
@@ -26,10 +14,6 @@ def prepareAffectiveText():
 		trial_count = len(emo_xml)
 		with open('database/AffectiveText/affectivetext_test.emotions.gold') as file:
 			emo_test_xml = file.readlines()
-		# with open('database/AffectiveText/affectivetext_trial.xml') as file:
-		# 	xml_trial = file.read().replace('\n', '')
-		# with open('database/AffectiveText/affectivetext_test.xml') as file:
-		# 	xml_test = file.read().replace('\n', '')
 
 		parser = ET.XMLParser(encoding="utf-8")
 		elem_trial = ET.parse('database/AffectiveText/affectivetext_trial.xml')
@@ -67,16 +51,3 @@ def processSentence(emo_xml, elem, cursor):
 			current_sentence = elem.find('.//instance[@id="'+emotion_scores[0]+'"]').text
 			cursor.execute("INSERT INTO affective_text_original(class, sentence) VALUES(%s, %s) ", (current_class, current_sentence))
 	return
-
-def getStopwords():
-    import glob
-    file_names = glob.glob("*.txt")
-    my_stopwords = []
-    for name in file_names:
-		with open(name, 'r') as file:
-		    temp = file.readlines()
-		my_stopwords += temp
-    return my_stopwords
-
-if __name__ == '__main__':
-	prepareAffectiveText()

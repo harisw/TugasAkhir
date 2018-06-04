@@ -15,8 +15,8 @@ from progress.bar import FillingCirclesBar as fcb
 from sklearn.metrics import accuracy_score
 from pprint import pprint
 
-start_test = 2472
-end_test = 2884
+# start_test = 2472
+# end_test = 2884
 
 def process_words():
 	try:
@@ -25,7 +25,7 @@ def process_words():
 		cursor = conn.cursor(buffered=True)
 
 		# CREATE EMPTY BOW
-		cursor.execute("SELECT * FROM dictionary_maxentropy")
+		cursor.execute("SELECT * FROM dictionary")
 		words = cursor.fetchall()
 
 		cursor.execute("SELECT * FROM preprocessed_data")
@@ -39,7 +39,7 @@ def process_words():
 		for item in data_train:
 			sentence = word_tokenize(item[2])
 			for w in sentence:
-				cursor.execute("SELECT id FROM dictionary_maxentropy WHERE word=%(w)s", {"w": w})
+				cursor.execute("SELECT id FROM dictionary WHERE word=%(w)s", {"w": w})
 				result = cursor.fetchone()
 				train_bow[index][result[0]+2] += 1
 			train_bow[index][0] = item[1]
