@@ -5,20 +5,14 @@ from sklearn import linear_model
 from sklearn import metrics
 from sklearn.model_selection import cross_val_score
 from progress.bar import IncrementalBar
-import pandas as pd
 import numpy as np
-from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import BernoulliNB
 import knowledge_based as kb
 from progress.bar import FillingCirclesBar as fcb
 from sklearn.metrics import accuracy_score
-from pprint import pprint
 
-# start_test = 2472
-# end_test = 2884
-
-def process_words():
+def processWords():
 	try:
 		dbconfig = read_db_config()
 		conn = MySQLConnection(**dbconfig)
@@ -57,8 +51,7 @@ def process_words():
 		return train_bow, len(words)
 
 def classifying():
-	bow_vector, words_num = process_words()
-
+	bow_vector, words_num = processWords()
 	temp = bow_vector[:start_test, :]
 	data_train = bow_vector[end_test:, :]
 	data_train = np.concatenate((data_train, temp), axis=0)
@@ -76,8 +69,7 @@ def classifying():
 			result_nb = bnb.predict([item[2:]])
 			result_lr = lr.predict([item[2:]])
 			result_kb = kb.predict(item[1])
-			print("\n nb :: ", result_nb)
-			print("\n lr :: ", result_lr)
+			
 			score_table[1][result_nb] += 1 
 			score_table[1][result_lr] += 1 
 			if result_kb != 0: 

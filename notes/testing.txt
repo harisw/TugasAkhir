@@ -1,0 +1,20 @@
+TESTING 1
+    - removing number specifier
+    - train id < 7001 = 5849 item
+    - testing 538 item
+    - removed guilt class
+    - remove all dictionary with only 2 character or less except(go, ok)
+    - remove time quantifier ('day', 'month', 'year')
+    - remove number quantifier ('st', 'nd', 'rd', 'th', 'one', 'two',
+                             'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten')
+    Accuracy 208 of 538 (38.66%)
+
+TESTING 2
+    - train id < 7001 = 5849 item
+    - testing 538 item
+    - removed guilt class
+    - remove all dictionary with only 2 character or less except(go, ok)
+    - remove time quantifier ('second', 'minute', 'hour', 'day', 'month', 'year')
+    - remove number quantifier ('st', 'nd', 'rd', 'th', 'one', 'two',
+                             'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten')
+    Accuracy 234 of 538 (43.49%)

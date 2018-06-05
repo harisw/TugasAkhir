@@ -1,3 +1,0 @@
-remove word (etc)
-remove unsignificant(occurences) word
-fix typo word (nitht)

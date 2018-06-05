@@ -20,9 +20,9 @@ def begin():
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
         cursor.execute("TRUNCATE preprocessed_data")
-        cursor.execute("SELECT * FROM cleaned_data_original")
+        cursor.execute("SELECT * FROM isear")
         isear_row = cursor.fetchall()
-        cursor.execute("SELECT * FROM affective_text_original")
+        cursor.execute("SELECT * FROM affectivetext")
         affective_row = cursor.fetchall()
         all_data = isear_row + affective_row
         preprocess(all_data, cursor)
@@ -55,9 +55,7 @@ def registerBow(cursor):
 
 def preprocess(row, cursor):
     stop_words = set(stopwords.words('english'))
-    # st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
     new_stopwords = getStopwords()
-    #English checking
     eng_words = enchant.Dict("en_US")
     pb = fcb("Preprocessing words ", max=len(row))
     for item in row:
@@ -76,9 +74,7 @@ def preprocess(row, cursor):
             w = w.lower()
             check = False
             w = spell(w)
-            #Using NERTagger to check it's entity
-            # ner_check = st.tag([w])
-            # if ner_check[0][1] == 'O':
+            # Lemmatize each words
             temp = lmtzr.lemmatize(w, 'a')
             if(temp != w):
                 check = True

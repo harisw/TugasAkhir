@@ -17,7 +17,8 @@ from progress.bar import FillingCirclesBar as fcb
 import numpy as np
 
 def predict(target_id):
-    try: 
+    try:
+        prefix = prefix+'knowledge_based/'
         dbconfig = read_db_config() 
         conn = MySQLConnection(**dbconfig) 
         cursor = conn.cursor()
@@ -25,9 +26,9 @@ def predict(target_id):
         query_res = cursor.fetchone()
         sentence = query_res[2]
         tt = TreeTagger(TAGLANG='en')
-        english_parser = StanfordParser('knowledge_based/stanford-parser.jar', 'knowledge_based/stanford-parser-3.9.1-models.jar')
-        st = nerTagger('knowledge_based/classifiers/english.all.3class.distsim.crf.ser.gz', 'knowledge_based/stanford-ner-3.9.1.jar')
-        wna = WNAffect('knowledge_based/wordnet1.6/', 'knowledge_based/wordnetAffect/')
+        english_parser = StanfordParser(prefix+'stanford-parser.jar', prefix+'stanford-parser-3.9.1-models.jar')
+        st = nerTagger(prefix+'classifiers/english.all.3class.distsim.crf.ser.gz', prefix+'stanford-ner-3.9.1.jar')
+        wna = WNAffect(prefix+'wordnet1.6/', prefix+'wordnetAffect/')
 
         tags = tt.tag_text(sentence)
         tags = treetaggerwrapper.make_tags(tags)

@@ -1,0 +1,6 @@
+joy 1069
+fear 1078
+anger 1085
+disgust 1071
+sadness 1037
+shame 1047
