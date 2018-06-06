@@ -2,22 +2,23 @@ import xml.etree.ElementTree as ET
 from mysql.connector import MySQLConnection, Error
 from python_mysql_dbconfig import read_db_config
 
+prefix = 'database/Affective/'
 def prepareAffectiveText():
     try:
 		dbconfig = read_db_config()
 		conn = MySQLConnection(**dbconfig)
 		cursor = conn.cursor()
-		cursor.execute("TRUNCATE affective_text_original")
+		# cursor.execute("TRUNCATE affective_text_original")
 		
-		with open('database/AffectiveText/affectivetext_trial.emotions.gold') as file:
+		with open(prefix+'affective1.emotions.gold') as file:
 			emo_xml = file.readlines()
 		trial_count = len(emo_xml)
-		with open('database/AffectiveText/affectivetext_test.emotions.gold') as file:
+		with open(prefix+'affective2.emotions.gold') as file:
 			emo_test_xml = file.readlines()
 
 		parser = ET.XMLParser(encoding="utf-8")
-		elem_trial = ET.parse('database/AffectiveText/affectivetext_trial.xml')
-		elem_test = ET.parse('database/AffectiveText/affectivetext_test.xml', parser=parser)
+		elem_trial = ET.parse(prefix+'affective1.xml')
+		elem_test = ET.parse(prefix+'affective2.xml', parser=parser)
 		elem = elem_trial
 		emo_xml = emo_xml[1:]
 		processSentence(emo_xml, elem_trial, cursor)
@@ -49,5 +50,7 @@ def processSentence(emo_xml, elem, cursor):
 				current_class = emotion[1]
 		if current_class != '':
 			current_sentence = elem.find('.//instance[@id="'+emotion_scores[0]+'"]').text
-			cursor.execute("INSERT INTO affective_text_original(class, sentence) VALUES(%s, %s) ", (current_class, current_sentence))
+			cursor.execute("INSERT INTO cleaned_data_original(class, sentence) VALUES(%s, %s) ", (current_class, current_sentence))
 	return
+if __name__ == '__main__':
+	prepareAffectiveText()

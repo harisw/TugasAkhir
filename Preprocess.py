@@ -20,11 +20,10 @@ def begin():
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
         cursor.execute("TRUNCATE preprocessed_data")
-        cursor.execute("SELECT * FROM isear")
+        cursor.execute("SELECT * FROM cleaned_data_original")
         isear_row = cursor.fetchall()
-        cursor.execute("SELECT * FROM affectivetext")
-        affective_row = cursor.fetchall()
-        all_data = isear_row + affective_row
+
+        all_data = isear_row
         preprocess(all_data, cursor)
         registerBow(cursor)
     except Error as e:
@@ -94,16 +93,8 @@ def preprocess(row, cursor):
                     filtered_sentence.append(w)
         if item[1] == "joy":
             new_class = 1
-        elif item[1] == "fear":
+        else:
             new_class = 2
-        elif item[1] == "anger":
-            new_class = 3
-        elif item[1] == "sadness":
-            new_class = 4
-        elif item[1] == "disgust":
-            new_class = 5
-        elif item[1] == "shame":
-            new_class = 6
         if len(filtered_sentence) > 1:
             cursor.execute("INSERT INTO preprocessed_data (class, sentence) VALUES(%s, %s) ", (new_class, last_string))
         pb.next()

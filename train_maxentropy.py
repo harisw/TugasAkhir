@@ -11,7 +11,15 @@ from sklearn.naive_bayes import BernoulliNB
 import knowledge_based as kb
 from progress.bar import FillingCirclesBar as fcb
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_recall_fscore_support as prf
+from treetaggerwrapper import TreeTagger 
+from nltk.parse.stanford import StanfordParser 
+from nltk.tag import StanfordNERTagger as nerTagger 
+from nltk.tokenize import word_tokenize
+from wnaffect import WNAffect
+from emotion import Emotion
 
+prefix = 'knowledge_based/'
 def processWords():
 	try:
 		dbconfig = read_db_config()
@@ -52,41 +60,75 @@ def processWords():
 
 def classifying():
 	bow_vector, words_num = processWords()
-	temp = bow_vector[:start_test, :]
-	data_train = bow_vector[end_test:, :]
-	data_train = np.concatenate((data_train, temp), axis=0)
-	data_test = bow_vector[start_test:end_test, :]
-	count = 0
-	bnb = BernoulliNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
-	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=2, max_iter=350).fit(data_train[:, 2:], data_train[:, 0])
-	total_test = 0
-	true_number = 0
-	for item in data_test:
-		score_table = np.zeros([2, 7], dtype=int)
-		if str(item[1]) != '0':
-			print item[1]
-			total_test += 1
-			result_nb = bnb.predict([item[2:]])
-			result_lr = lr.predict([item[2:]])
-			result_kb = kb.predict(item[1])
-			
-			score_table[1][result_nb] += 1 
-			score_table[1][result_lr] += 1 
-			if result_kb != 0: 
-				score_table[1][result_kb] += 1
-			predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
-			final_prediction = predicted[1]
-			if score_table[1][predicted[1]] == 1: 
-				final_prediction = result_nb 
-			if final_prediction == item[0]: 
-				true_number += 1
+	dbconfig = read_db_config()
+	conn = MySQLConnection(**dbconfig)
+	cursor = conn.cursor(buffered=True)
 
-			if item[0] != final_prediction:
-				with open('ensemble_result.txt', 'a') as file:
-					file.write("\n ID :: "+ str(item[1]))
-					file.write(" :: Real "+ str(item[0]))
-					file.write(" :: Predicted "+ str(predicted[1]))
-	print "\n True :: ", true_number
-	print "\n from :: ", total_test
-	print "\nAccuracy :: ", (float(true_number) / float(total_test))
+	start = 0
+	step = 760
+	end = start + step
+    # english_parser = StanfordParser(prefix+'stanford-parser.jar', prefix+'stanford-parser-3.9.1-models.jar')
+    # st = nerTagger(prefix+'classifiers/english.all.3class.distsim.crf.ser.gz', prefix+'stanford-ner-3.9.1.jar')
+	tt = TreeTagger(TAGLANG='en')
+	wna = WNAffect(prefix+'wordnet1.6/', prefix+'wordnetAffect/')
+	for i in range(0, 10):
+		if i == 0:
+			data_train = bow_vector[step:, :]
+			data_test = bow_vector[:end, :]
+		elif i == 9:
+			data_train = bow_vector[:start, :]
+			data_test = bow_vector[start:, :]
+		else:
+			temp = bow_vector[:start, :]
+			data_train = bow_vector[end:, :]
+			data_train = np.concatenate((data_train, temp), axis=0)
+			data_test = bow_vector[start:end, :]
+		start += step
+		end += step
+	# temp = bow_vector[:start_test, :]
+	# data_train = bow_vector[end_test:, :]
+	# data_train = np.concatenate((data_train, temp), axis=0)
+	# data_test = bow_vector[start_test:end_test, :]
+		bnb = MultinomialNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+		lr = linear_model.LogisticRegression(solver='liblinear', n_jobs=3, max_iter=300).fit(data_train[:, 2:], data_train[:, 0])
+		total_test = 0
+		true_number = 0
+		prediction = []
+		for item in data_test:
+			score_table = np.zeros([2, 3], dtype=int)
+			if str(item[1]) != '0':
+				print item[1]
+				total_test += 1
+				result_nb = bnb.predict([item[2:]])
+				result_lr = lr.predict([item[2:]])
+				result_kb = kb.predict(item[1], tt, wna, cursor)
+				
+				score_table[1][result_nb] += 1 
+				score_table[1][result_lr] += 1 
+				if result_kb != 0: 
+					score_table[1][result_kb] += 1
+				predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
+				final_prediction = predicted[1]
+				if score_table[1][predicted[1]] == 1: 
+					final_prediction = result_nb 
+				if final_prediction == item[0]: 
+					true_number += 1
+				prediction.append(int(final_prediction))
+		prediction = np.array(prediction)
+		if i == 9:
+			all_score = prf(data_test[:770,0], prediction, average='micro')
+		else:
+			all_score = prf(data_test[:,0], prediction, average='micro')
+		with open('ensemble_result[var4].txt', 'a') as file:
+			file.write("\n True :: "+str(true_number))
+			file.write("\n from :: "+str(total_test))
+			file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
+			file.write("\nPrecision :: "+str(all_score[0]))
+			file.write("\nRecall :: "+str(all_score[1]))
+			file.write("\nF-Score :: "+str(all_score[2]))
+		print "\n True :: ", true_number
+		print "\n from :: ", total_test
+		print "\nAccuracy :: ", (float(true_number) / float(total_test))
+	cursor.close()
+	conn.close()
 	return

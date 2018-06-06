@@ -16,34 +16,26 @@ import treetaggerwrapper
 from progress.bar import FillingCirclesBar as fcb
 import numpy as np
 
-def predict(target_id):
-    try:
-        prefix = prefix+'knowledge_based/'
-        dbconfig = read_db_config() 
-        conn = MySQLConnection(**dbconfig) 
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM cleaned_data_original where id = %(target)s", {'target': str(target_id)})
-        query_res = cursor.fetchone()
-        sentence = query_res[2]
-        tt = TreeTagger(TAGLANG='en')
-        english_parser = StanfordParser(prefix+'stanford-parser.jar', prefix+'stanford-parser-3.9.1-models.jar')
-        st = nerTagger(prefix+'classifiers/english.all.3class.distsim.crf.ser.gz', prefix+'stanford-ner-3.9.1.jar')
-        wna = WNAffect(prefix+'wordnet1.6/', prefix+'wordnetAffect/')
+def predict(target_id, tt, wna, cursor):
+    # try:
+    cursor.execute("SELECT * FROM cleaned_data_original where id = %(target)s", {'target': str(target_id)})
+    query_res = cursor.fetchone()
+    if query_res == None:
+        return 0
+    sentence = query_res[2]
+    tags = tt.tag_text(sentence)
+    tags = treetaggerwrapper.make_tags(tags)
+    emotions = ""
+    check = 0
+    check_emo = 0
 
-        tags = tt.tag_text(sentence)
-        tags = treetaggerwrapper.make_tags(tags)
-        parser_result = english_parser.raw_parse(sentence) 
-        ner_result = st.tag(word_tokenize(sentence))
-        emotions = ""
-        check = 0
-        check_emo = 0
+    emotion_map = mapEmotions()
+    emotion_score = np.zeros([2, 7], dtype=int)
 
-        emotion_map = mapEmotions()
-        emotion_score = np.zeros([2, 7], dtype=int)
-
-        for i in range(0, 7):
-            emotion_score[0][i] = i
-        for word in tags:
+    for i in range(0, 7):
+        emotion_score[0][i] = i
+    for word in tags:
+        if len(word) >= 2:
             emo = wna.get_emotion(word[0], word[1])
             if emo != None:
                 if check_emo == 0:
@@ -51,67 +43,48 @@ def predict(target_id):
                 result = lookUp(str(emo), emotion_map)
                 if result != 0:
                     emotion_score[1][result] += 1
-        # print emotion_map
-        if check_emo != 0:
-            result_index = np.unravel_index(np.argmax(emotion_score[1], axis=None), emotion_score[1].shape)
-            return result_index[0]
-        else:
-            return 0
-    except Error as e: 
-        print(e)
-    finally: 
-        conn.commit() 
-        cursor.close() 
-        conn.close()
+    # print emotion_map
+    if check_emo != 0:
+        result_index = np.unravel_index(np.argmax(emotion_score[1], axis=None), emotion_score[1].shape)
+        return result_index[0]
+    else:
+        return 0
+# except Error as e: 
+#     print(e)
+# finally:
+    # conn.commit() 
 
 def lookUp(emotion, mymap):
     if emotion in mymap["joy"]:
         return 1
-    elif emotion in mymap["fear"]:
+    elif emotion in mymap["fear"] or emotion in mymap["anger"] or emotion in mymap["sadness"] or emotion in mymap["disgust"] or emotion in mymap["shame"]:
         return 2
-    elif emotion in mymap["anger"]:
-        return 3
-    elif emotion in mymap["sadness"]:
-        return 4
-    elif emotion in mymap["disgust"]:
-        return 5
-    elif emotion in mymap["shame"]:
-        return 6
     else:
         return 0
 def mapEmotions():
     emotions = {}
-    with open('joy_mapping.txt', 'r') as file:
+    with open('notes/joy_mapping.txt', 'r') as file:
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["joy"] = mapping
-    with open('fear_mapping.txt', 'r') as file:
+    with open('notes/fear_mapping.txt', 'r') as file:
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["fear"] = mapping
-    with open('anger_mapping.txt', 'r') as file:
+    with open('notes/anger_mapping.txt', 'r') as file:
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["anger"] = mapping
-    with open('sadness_mapping.txt', 'r') as file:
+    with open('notes/sadness_mapping.txt', 'r') as file:
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["sadness"] = mapping
-    with open('disgust_mapping.txt', 'r') as file:
+    with open('notes/disgust_mapping.txt', 'r') as file:
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["disgust"] = mapping
-    with open('shame_mapping.txt', 'r') as file:
+    with open('notes/shame_mapping.txt', 'r') as file:
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["shame"] = mapping
     return emotions
-
-def findMax(emotion_counter):
-    curr_max = 0
-    result = 0
-    for i in range(0,7):
-        if emotion_counter[i] > curr_max:
-            result = i
-            curr_max = emotion_counter[i]
-    return result
