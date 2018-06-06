@@ -1,61 +1,51 @@
 
- True :: 666
- from :: 760
+ True :: 666 from :: 760
 Accuracy :: 0.876315789474
-Precision :: 0.876315789474
-Recall :: 0.876315789474
-F-Score :: 0.876315789474
- True :: 684
- from :: 760
-Accuracy :: 0.9
-Precision :: 0.9
-Recall :: 0.9
-F-Score :: 0.9
- True :: 654
- from :: 760
-Accuracy :: 0.860526315789
-Precision :: 0.860526315789
-Recall :: 0.860526315789
-F-Score :: 0.860526315789
- True :: 669
- from :: 760
+Precision :: 0.640287769784
+Recall :: 0.669172932331
+F-Score :: 0.654411764706
+ True :: 682 from :: 760
+Accuracy :: 0.897368421053
+Precision :: 0.72641509434
+Recall :: 0.611111111111
+F-Score :: 0.663793103448
+ True :: 667 from :: 760
+Accuracy :: 0.877631578947
+Precision :: 0.63309352518
+Recall :: 0.676923076923
+F-Score :: 0.654275092937
+ True :: 669 from :: 760
 Accuracy :: 0.880263157895
-Precision :: 0.880263157895
-Recall :: 0.880263157895
-F-Score :: 0.880263157895
- True :: 655
- from :: 760
-Accuracy :: 0.861842105263
-Precision :: 0.861842105263
-Recall :: 0.861842105263
-F-Score :: 0.861842105263
- True :: 653
- from :: 760
-Accuracy :: 0.859210526316
-Precision :: 0.859210526316
-Recall :: 0.859210526316
-F-Score :: 0.859210526316
- True :: 662
- from :: 760
-Accuracy :: 0.871052631579
-Precision :: 0.871052631579
-Recall :: 0.871052631579
-F-Score :: 0.871052631579
- True :: 659
- from :: 760
-Accuracy :: 0.867105263158
-Precision :: 0.867105263158
-Recall :: 0.867105263158
-F-Score :: 0.867105263158
- True :: 580
- from :: 760
+Precision :: 0.6328125
+Recall :: 0.648
+F-Score :: 0.640316205534
+ True :: 656 from :: 760
+Accuracy :: 0.863157894737
+Precision :: 0.579365079365
+Recall :: 0.588709677419
+F-Score :: 0.584
+ True :: 649 from :: 760
+Accuracy :: 0.853947368421
+Precision :: 0.54347826087
+Recall :: 0.787401574803
+F-Score :: 0.64308681672
+ True :: 658 from :: 760
+Accuracy :: 0.865789473684
+Precision :: 0.587096774194
+Recall :: 0.705426356589
+F-Score :: 0.640845070423
+ True :: 650 from :: 760
+Accuracy :: 0.855263157895
+Precision :: 0.553571428571
+Recall :: 0.7265625
+F-Score :: 0.628378378378
+ True :: 580 from :: 760
 Accuracy :: 0.763157894737
-Precision :: 0.763157894737
-Recall :: 0.763157894737
-F-Score :: 0.763157894737
- True :: 481
- from :: 770
-Accuracy :: 0.624675324675
-Precision :: 0.624675324675
-Recall :: 0.624675324675
-F-Score :: 0.624675324675
+Precision :: 0.599156118143
+Recall :: 0.625550660793
+F-Score :: 0.612068965517
+ True :: 483 from :: 770
+Accuracy :: 0.627272727273
+Precision :: 0.625498007968
+Recall :: 0.448571428571
+F-Score :: 0.522462562396

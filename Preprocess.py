@@ -94,7 +94,7 @@ def preprocess(row, cursor):
         if item[1] == "joy":
             new_class = 1
         else:
-            new_class = 2
+            new_class = 0
         if len(filtered_sentence) > 1:
             cursor.execute("INSERT INTO preprocessed_data (class, sentence) VALUES(%s, %s) ", (new_class, last_string))
         pb.next()
