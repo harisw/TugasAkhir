@@ -86,10 +86,10 @@ def classifying():
 			result_nb = bnb.predict([item[2:]])
 			result_lr = lr.predict([item[2:]])
 			result_kb = kb.predict(item[1], tt, wna, cursor)
-			
+			print "\nHasil knowledge_based ", result_kb
 			score_table[1][result_nb] += 1 
 			score_table[1][result_lr] += 1 
-			if result_kb != 0: 
+			if result_kb != -1: 
 				score_table[1][result_kb] += 1
 			predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
 			final_prediction = predicted[1]
@@ -100,7 +100,7 @@ def classifying():
 			prediction.append(int(final_prediction))
 	prediction = np.array(prediction)
 	all_score = prf(data_test[:1222,0], prediction, average='binary')
-	with open('ensemble_result[var1 affective].txt', 'a') as file:
+	with open('ensemble_result.txt', 'a') as file:
 		file.write("\n True :: "+str(true_number))
 		file.write(" from :: "+str(total_test))
 		file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
@@ -145,76 +145,76 @@ def classifying():
 		file.write("\nF-Score :: "+str(all_score[2]))
 
 
-	bnb = MultinomialNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
-	lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=3, max_iter=300).fit(data_train[:, 2:], data_train[:, 0])
-	total_test = 0
-	true_number = 0
-	prediction = []
-	for item in data_test:
-		score_table = np.zeros([2, 3], dtype=int)
-		if str(item[1]) != '0':
-			print item[1]
-			total_test += 1
-			result_nb = bnb.predict([item[2:]])
-			result_lr = lr.predict([item[2:]])
-			result_kb = kb.predict(item[1], tt, wna, cursor)
+	# bnb = MultinomialNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+	# lr = linear_model.LogisticRegression(solver='newton-cg', n_jobs=3, max_iter=300).fit(data_train[:, 2:], data_train[:, 0])
+	# total_test = 0
+	# true_number = 0
+	# prediction = []
+	# for item in data_test:
+	# 	score_table = np.zeros([2, 3], dtype=int)
+	# 	if str(item[1]) != '0':
+	# 		print item[1]
+	# 		total_test += 1
+	# 		result_nb = bnb.predict([item[2:]])
+	# 		result_lr = lr.predict([item[2:]])
+	# 		result_kb = kb.predict(item[1], tt, wna, cursor)
 			
-			score_table[1][result_nb] += 1 
-			score_table[1][result_lr] += 1 
-			if result_kb != 0: 
-				score_table[1][result_kb] += 1
-			predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
-			final_prediction = predicted[1]
-			if score_table[1][predicted[1]] == 1: 
-				final_prediction = result_nb 
-			if final_prediction == item[0]: 
-				true_number += 1
-			prediction.append(int(final_prediction))
-	prediction = np.array(prediction)
-	all_score = prf(data_test[:1222,0], prediction, average='binary')
-	with open('ensemble_result[var3 affective].txt', 'a') as file:
-		file.write("\n True :: "+str(true_number))
-		file.write(" from :: "+str(total_test))
-		file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
-		file.write("\nPrecision :: "+str(all_score[0]))
-		file.write("\nRecall :: "+str(all_score[1]))
-		file.write("\nF-Score :: "+str(all_score[2]))
+	# 		score_table[1][result_nb] += 1 
+	# 		score_table[1][result_lr] += 1 
+	# 		if result_kb != 0: 
+	# 			score_table[1][result_kb] += 1
+	# 		predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
+	# 		final_prediction = predicted[1]
+	# 		if score_table[1][predicted[1]] == 1: 
+	# 			final_prediction = result_nb 
+	# 		if final_prediction == item[0]: 
+	# 			true_number += 1
+	# 		prediction.append(int(final_prediction))
+	# prediction = np.array(prediction)
+	# all_score = prf(data_test[:1222,0], prediction, average='binary')
+	# with open('ensemble_result[var3 affective].txt', 'a') as file:
+	# 	file.write("\n True :: "+str(true_number))
+	# 	file.write(" from :: "+str(total_test))
+	# 	file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
+	# 	file.write("\nPrecision :: "+str(all_score[0]))
+	# 	file.write("\nRecall :: "+str(all_score[1]))
+	# 	file.write("\nF-Score :: "+str(all_score[2]))
 
 
-	bnb = MultinomialNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
-	lr = linear_model.LogisticRegression(solver='liblinear', n_jobs=3, max_iter=300).fit(data_train[:, 2:], data_train[:, 0])
-	total_test = 0
-	true_number = 0
-	prediction = []
-	for item in data_test:
-		score_table = np.zeros([2, 3], dtype=int)
-		if str(item[1]) != '0':
-			print item[1]
-			total_test += 1
-			result_nb = bnb.predict([item[2:]])
-			result_lr = lr.predict([item[2:]])
-			result_kb = kb.predict(item[1], tt, wna, cursor)
+	# bnb = MultinomialNB(alpha=0.01).fit(data_train[:, 2:], data_train[:, 0])
+	# lr = linear_model.LogisticRegression(solver='liblinear', n_jobs=3, max_iter=300).fit(data_train[:, 2:], data_train[:, 0])
+	# total_test = 0
+	# true_number = 0
+	# prediction = []
+	# for item in data_test:
+	# 	score_table = np.zeros([2, 3], dtype=int)
+	# 	if str(item[1]) != '0':
+	# 		print item[1]
+	# 		total_test += 1
+	# 		result_nb = bnb.predict([item[2:]])
+	# 		result_lr = lr.predict([item[2:]])
+	# 		result_kb = kb.predict(item[1], tt, wna, cursor)
 			
-			score_table[1][result_nb] += 1 
-			score_table[1][result_lr] += 1 
-			if result_kb != 0: 
-				score_table[1][result_kb] += 1
-			predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
-			final_prediction = predicted[1]
-			if score_table[1][predicted[1]] == 1: 
-				final_prediction = result_nb 
-			if final_prediction == item[0]: 
-				true_number += 1
-			prediction.append(int(final_prediction))
-	prediction = np.array(prediction)
-	all_score = prf(data_test[:1222,0], prediction, average='binary')
-	with open('ensemble_result[var4 affective].txt', 'a') as file:
-		file.write("\n True :: "+str(true_number))
-		file.write(" from :: "+str(total_test))
-		file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
-		file.write("\nPrecision :: "+str(all_score[0]))
-		file.write("\nRecall :: "+str(all_score[1]))
-		file.write("\nF-Score :: "+str(all_score[2]))
+	# 		score_table[1][result_nb] += 1 
+	# 		score_table[1][result_lr] += 1 
+	# 		if result_kb != 0: 
+	# 			score_table[1][result_kb] += 1
+	# 		predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
+	# 		final_prediction = predicted[1]
+	# 		if score_table[1][predicted[1]] == 1: 
+	# 			final_prediction = result_nb 
+	# 		if final_prediction == item[0]: 
+	# 			true_number += 1
+	# 		prediction.append(int(final_prediction))
+	# prediction = np.array(prediction)
+	# all_score = prf(data_test[:1222,0], prediction, average='binary')
+	# with open('ensemble_result[var4 affective].txt', 'a') as file:
+	# 	file.write("\n True :: "+str(true_number))
+	# 	file.write(" from :: "+str(total_test))
+	# 	file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
+	# 	file.write("\nPrecision :: "+str(all_score[0]))
+	# 	file.write("\nRecall :: "+str(all_score[1]))
+	# 	file.write("\nF-Score :: "+str(all_score[2]))
 	cursor.close()
 	conn.close()
 	return
