@@ -1,0 +1,51 @@
+
+True :: 670 from :: 760
+Accuracy :: 0.881578947368
+Precision :: 0.680672268908
+Recall :: 0.609022556391
+F-Score :: 0.642857142857
+True :: 679 from :: 760
+Accuracy :: 0.893421052632
+Precision :: 0.702702702703
+Recall :: 0.619047619048
+F-Score :: 0.658227848101
+True :: 673 from :: 760
+Accuracy :: 0.885526315789
+Precision :: 0.674796747967
+Recall :: 0.638461538462
+F-Score :: 0.656126482213
+True :: 675 from :: 760
+Accuracy :: 0.888157894737
+Precision :: 0.666666666667
+Recall :: 0.64
+F-Score :: 0.65306122449
+True :: 652 from :: 760
+Accuracy :: 0.857894736842
+Precision :: 0.571428571429
+Recall :: 0.516129032258
+F-Score :: 0.542372881356
+True :: 670 from :: 760
+Accuracy :: 0.881578947368
+Precision :: 0.624161073826
+Recall :: 0.732283464567
+F-Score :: 0.673913043478
+True :: 669 from :: 760
+Accuracy :: 0.880263157895
+Precision :: 0.631944444444
+Recall :: 0.705426356589
+F-Score :: 0.666666666667
+True :: 664 from :: 760
+Accuracy :: 0.873684210526
+Precision :: 0.611111111111
+Recall :: 0.6875
+F-Score :: 0.647058823529
+True :: 581 from :: 760
+Accuracy :: 0.764473684211
+Precision :: 0.611111111111
+Recall :: 0.581497797357
+F-Score :: 0.595936794582
+True :: 488 from :: 770
+Accuracy :: 0.633766233766
+Precision :: 0.665048543689
+Recall :: 0.391428571429
+F-Score :: 0.492805755396
