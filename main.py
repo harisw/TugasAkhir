@@ -4,4 +4,5 @@ from register_bow import registerBow
 
 if __name__ == '__main__':
 	# pp.begin()
-	tm.classifying()
+	tm.classifyingCV()
+	tm.classifyingAffective()
