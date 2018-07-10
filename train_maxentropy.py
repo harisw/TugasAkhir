@@ -123,7 +123,7 @@ def classifyingCV():
 				predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
 				final_prediction = predicted[1]
 				if score_table[1][predicted[1]] == 1: 
-					final_prediction = result_nb 
+					final_prediction = result_lr 
 				if final_prediction == item[0]: 
 					true_number += 1
 				prediction.append(int(final_prediction))
@@ -214,7 +214,7 @@ def classifyingCV():
 				predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
 				final_prediction = predicted[1]
 				if score_table[1][predicted[1]] == 1: 
-					final_prediction = result_nb 
+					final_prediction = result_lr 
 				if final_prediction == item[0]: 
 					true_number += 1
 				prediction.append(int(final_prediction))
@@ -301,7 +301,7 @@ def classifyingCV():
 				predicted = np.unravel_index(np.argmax(score_table, axis=None), score_table.shape)
 				final_prediction = predicted[1]
 				if score_table[1][predicted[1]] == 1: 
-					final_prediction = result_nb 
+					final_prediction = result_lr 
 				if final_prediction == item[0]: 
 					true_number += 1
 		
