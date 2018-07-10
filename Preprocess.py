@@ -19,13 +19,24 @@ def begin():
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute("TRUNCATE preprocessed_data")
-        cursor.execute("SELECT * FROM cleaned_data_original")
-        isear_row = cursor.fetchall()
 
-        all_data = isear_row
-        preprocess(all_data, cursor)
-        registerBow(cursor)
+        cursor.execute("TRUNCATE preprocessed_isear")
+        cursor.execute("SELECT * FROM isear")
+        isear_row = cursor.fetchall()
+        preprocess(isear_row, cursor, 'isear')
+        registerBow(cursor, 'isear')
+
+        cursor.execute("TRUNCATE preprocessed_affectivetext")
+        cursor.execute("SELECT * FROM affectivetext")
+        affective_row = cursor.fetchall()
+        preprocess(affective_row, cursor, 'affective')
+        registerBow(cursor, 'affective')
+
+        all_row = affective_row + isear_row
+        cursor.execute("TRUNCATE preprocessed_data")
+        cursor.execute("TRUNCATE mixed_data")
+        preprocess(all_row, cursor, 'all')
+        registerBow(cursor, 'all')        
     except Error as e:
         print(e)
 
@@ -34,10 +45,16 @@ def begin():
         cursor.close()
         conn.close()
 
-def registerBow(cursor):
-    cursor.execute("TRUNCATE dictionary")
-    cursor.execute("ALTER TABLE dictionary AUTO_INCREMENT=1")
-    cursor.execute("SELECT sentence FROM preprocessed_data")
+def registerBow(cursor, dataset):
+    if dataset == 'isear':
+        cursor.execute("TRUNCATE dictionary_isear")
+        cursor.execute("SELECT sentence FROM preprocessed_isear")
+    elif dataset == 'affective':
+        cursor.execute("TRUNCATE dictionary_affectivetext")
+        cursor.execute("SELECT sentence FROM preprocessed_affectivetext")
+    else:
+        cursor.execute("TRUNCATE dictionary")
+        cursor.execute("SELECT sentence FROM preprocessed_data")
     corpus = cursor.fetchall()
     word_list = []
     pb = fsb("Registering Bow ", max=len(corpus))
@@ -46,17 +63,21 @@ def registerBow(cursor):
         for w in words:
             if w not in word_list:
                 word_list.append(w)
-                # print(w)
-                cursor.execute("INSERT INTO dictionary (word) VALUE(%(myword)s)", {'myword': w })
+                if dataset == 'isear':
+                    cursor.execute("INSERT INTO dictionary_isear (word) VALUE(%(myword)s)", {'myword': w })
+                elif dataset == 'affective':
+                    cursor.execute("INSERT INTO dictionary_affectivetext (word) VALUE(%(myword)s)", {'myword': w })
+                else:
+                    cursor.execute("INSERT INTO dictionary (word) VALUE(%(myword)s)", {'myword': w })
         pb.next()
     pb.finish()
     return
 
-def preprocess(row, cursor):
+def preprocess(row, cursor, dataset):
     stop_words = set(stopwords.words('english'))
     new_stopwords = getStopwords()
     eng_words = enchant.Dict("en_US")
-    pb = fcb("Preprocessing words ", max=len(row))
+    pb = fcb("Preprocessing words "+dataset, max=len(row))
     for item in row:
         #Removing punctuation and special char
         newstring = item[2].lower()
@@ -96,7 +117,13 @@ def preprocess(row, cursor):
         else:
             new_class = 0
         if len(filtered_sentence) > 1:
-            cursor.execute("INSERT INTO preprocessed_data (class, sentence) VALUES(%s, %s) ", (new_class, last_string))
+            if dataset == 'isear':
+                cursor.execute("INSERT INTO preprocessed_isear VALUES(%s, %s, %s) ", (item[0], new_class, last_string))
+            elif dataset == 'affective':
+                cursor.execute("INSERT INTO preprocessed_affectivetext VALUES(%s, %s, %s) ", (item[0], new_class, last_string))
+            else:
+                cursor.execute("INSERT INTO mixed_data (class, sentence) VALUES(%s, %s) ", (new_class, item[2]))
+                cursor.execute("INSERT INTO preprocessed_data (class, sentence) VALUES(%s, %s) ", (new_class, last_string))
         pb.next()
     pb.finish()
     return

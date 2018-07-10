@@ -16,9 +16,14 @@ import treetaggerwrapper
 from progress.bar import FillingCirclesBar as fcb
 import numpy as np
 
-def predict(target_id, tt, wna, cursor):
+def predict(target_id, tt, wna, cursor, dataset):
     # try:
-    cursor.execute("SELECT * FROM cleaned_data_original where id = %(target)s", {'target': str(target_id)})
+    if dataset == 'isear':
+        cursor.execute("SELECT * FROM isear where id = %(target)s", {'target': str(target_id)})
+    elif dataset == 'affective':
+        cursor.execute("SELECT * FROM affectivetext where id = %(target)s", {'target': str(target_id)})
+    else:
+        cursor.execute("SELECT * FROM mixed_data where id = %(target)s", {'target': str(target_id)})
     query_res = cursor.fetchone()
     if query_res == None:
         return 0
@@ -43,21 +48,16 @@ def predict(target_id, tt, wna, cursor):
                 result = lookUp(str(emo), emotion_map)
                 if result != -1:
                     emotion_score[1][result] += 1
-    # print emotion_map
     if check_emo != 0:
         result_index = np.unravel_index(np.argmax(emotion_score[1], axis=None), emotion_score[1].shape)
         return result_index[0]
     else:
         return -1
-# except Error as e: 
-#     print(e)
-# finally:
-    # conn.commit() 
 
 def lookUp(emotion, mymap):
     if emotion in mymap["joy"]:
         return 1
-    elif emotion in mymap["fear"] or emotion in mymap["anger"] or emotion in mymap["sadness"] or emotion in mymap["disgust"] or emotion in mymap["shame"]:
+    elif emotion in mymap["fear"] or emotion in mymap["anger"] or emotion in mymap["sadness"] or emotion in mymap["disgust"] or emotion in mymap["shame"] or emotion in mymap["guilt"]:
         return 0
     else:
         return -1
@@ -87,4 +87,8 @@ def mapEmotions():
         mapping = file.read()
         mapping = mapping.split(',')
         emotions["shame"] = mapping
+    with open('notes/guilt_mapping.txt', 'r') as file:
+        mapping = file.read()
+        mapping = mapping.split(',')
+        emotions["guilt"] = mapping
     return emotions
