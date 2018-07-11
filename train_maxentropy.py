@@ -18,6 +18,7 @@ from nltk.tag import StanfordNERTagger as nerTagger
 from nltk.tokenize import word_tokenize
 from wnaffect import WNAffect
 from emotion import Emotion
+from sklearn.metrics import confusion_matrix
 
 prefix = 'knowledge_based/'
 def processWords(dataset):
@@ -145,28 +146,34 @@ def classifyingCV():
 			nb_score = prf(data_test[:665,0], prediction_nb, average='binary')
 			lr_score = prf(data_test[:665,0], prediction_lr, average='binary')
 			all_score = prf(data_test[:665,0], prediction, average='binary')
+			tn, fp, fn, tp = confusion_matrix(data_test[:665,0], prediction).ravel()
 		else:
 			nb_score = prf(data_test[:,0], prediction_nb, average='binary')
 			lr_score = prf(data_test[:,0], prediction_lr, average='binary')
 			all_score = prf(data_test[:,0], prediction, average='binary')
-		with open('ensemble_result[isear].txt', 'a') as file:
-			file.write("\n\n\nTrue :: "+str(true_number))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
-			file.write("\nPrecision :: "+str(all_score[0]))
-			file.write("\nF-Score :: "+str(all_score[2]))
+			tn, fp, fn, tp = confusion_matrix(data_test[:,0], prediction).ravel()
+		with open('ensemble_confusion[isear].txt', 'a') as file:
+			file.write("\n\nTRUE NEG :: "+str(tn))
+			file.write("\nFALSE POS :: "+str(fp))
+			file.write("\nFALSE NEG :: "+str(fn))
+			file.write("\nTRUE POS :: "+str(tp))
+			# file.write("\n\n\nTrue :: "+str(true_number))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
+			# file.write("\nPrecision :: "+str(all_score[0]))
+			# file.write("\nF-Score :: "+str(all_score[2]))
 
-			file.write("\nNB True :: "+str(true_nb))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_nb) / float(total_test))))
-			file.write("\nPrecision :: "+str(nb_score[0]))
-			file.write("\nF-Score :: "+str(nb_score[2]))
+			# file.write("\nNB True :: "+str(true_nb))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_nb) / float(total_test))))
+			# file.write("\nPrecision :: "+str(nb_score[0]))
+			# file.write("\nF-Score :: "+str(nb_score[2]))
 
-			file.write("\nLR True :: "+str(true_lr))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_lr) / float(total_test))))
-			file.write("\nPrecision :: "+str(lr_score[0]))
-			file.write("\nF-Score :: "+str(lr_score[2]))
+			# file.write("\nLR True :: "+str(true_lr))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_lr) / float(total_test))))
+			# file.write("\nPrecision :: "+str(lr_score[0]))
+			# file.write("\nF-Score :: "+str(lr_score[2]))
 
 
 	bow_affective, words_num = processWords('affective')
@@ -233,28 +240,35 @@ def classifyingCV():
 			nb_score = prf(data_test[:116,0], prediction_nb, average='binary')
 			lr_score = prf(data_test[:116,0], prediction_lr, average='binary')
 			all_score = prf(data_test[:116,0], prediction, average='binary')
+			tn, fp, fn, tp = confusion_matrix(data_test[:116,0], prediction).ravel()
 		else:
 			nb_score = prf(data_test[:,0], prediction_nb, average='binary')
 			lr_score = prf(data_test[:,0], prediction_lr, average='binary')
 			all_score = prf(data_test[:,0], prediction, average='binary')
-		with open('ensemble_result[affective].txt', 'a') as file:
-			file.write("\n\n\nTrue :: "+str(true_number))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
-			file.write("\nPrecision :: "+str(all_score[0]))
-			file.write("\nF-Score :: "+str(all_score[2]))
+			tn, fp, fn, tp = confusion_matrix(data_test[:,0], prediction).ravel()
 
-			file.write("\nNB True :: "+str(true_nb))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_nb) / float(total_test))))
-			file.write("\nPrecision :: "+str(nb_score[0]))
-			file.write("\nF-Score :: "+str(nb_score[2]))
+		with open('ensemble_confusion[affective].txt', 'a') as file:
+			file.write("\n\nTRUE NEG :: "+str(tn))
+			file.write("\nFALSE POS :: "+str(fp))
+			file.write("\nFALSE NEG :: "+str(fn))
+			file.write("\nTRUE POS :: "+str(tp))
+			# file.write("\n\n\nTrue :: "+str(true_number))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
+			# file.write("\nPrecision :: "+str(all_score[0]))
+			# file.write("\nF-Score :: "+str(all_score[2]))
 
-			file.write("\nLR True :: "+str(true_lr))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_lr) / float(total_test))))
-			file.write("\nPrecision :: "+str(lr_score[0]))
-			file.write("\nF-Score :: "+str(lr_score[2]))
+			# file.write("\nNB True :: "+str(true_nb))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_nb) / float(total_test))))
+			# file.write("\nPrecision :: "+str(nb_score[0]))
+			# file.write("\nF-Score :: "+str(nb_score[2]))
+
+			# file.write("\nLR True :: "+str(true_lr))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_lr) / float(total_test))))
+			# file.write("\nPrecision :: "+str(lr_score[0]))
+			# file.write("\nF-Score :: "+str(lr_score[2]))
 	
 	bow_mixed, words_num = processWords('mixed')
 	start = 0
@@ -320,28 +334,34 @@ def classifyingCV():
 			nb_score = prf(data_test[:1169,0], prediction_nb, average='binary')
 			lr_score = prf(data_test[:1169,0], prediction_lr, average='binary')
 			all_score = prf(data_test[:1169,0], prediction, average='binary')
+			tn, fp, fn, tp = confusion_matrix(data_test[:1169,0], prediction).ravel()
 		else:
 			nb_score = prf(data_test[:,0], prediction_nb, average='binary')
 			lr_score = prf(data_test[:,0], prediction_lr, average='binary')
 			all_score = prf(data_test[:,0], prediction, average='binary')
-		with open('ensemble_result[mixed].txt', 'a') as file:
-			file.write("\n\n\nTrue :: "+str(true_number))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
-			file.write("\nPrecision :: "+str(all_score[0]))
-			file.write("\nF-Score :: "+str(all_score[2]))
+			tn, fp, fn, tp = confusion_matrix(data_test[:,0], prediction).ravel()
+		with open('ensemble_confusion[mixed].txt', 'a') as file:
+			file.write("\n\nTRUE NEG :: "+str(tn))
+			file.write("\nFALSE POS :: "+str(fp))
+			file.write("\nFALSE NEG :: "+str(fn))
+			file.write("\nTRUE POS :: "+str(tp))
+			# file.write("\n\n\nTrue :: "+str(true_number))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_number) / float(total_test))))
+			# file.write("\nPrecision :: "+str(all_score[0]))
+			# file.write("\nF-Score :: "+str(all_score[2]))
 
-			file.write("\nNB True :: "+str(true_nb))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_nb) / float(total_test))))
-			file.write("\nPrecision :: "+str(nb_score[0]))
-			file.write("\nF-Score :: "+str(nb_score[2]))
+			# file.write("\nNB True :: "+str(true_nb))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_nb) / float(total_test))))
+			# file.write("\nPrecision :: "+str(nb_score[0]))
+			# file.write("\nF-Score :: "+str(nb_score[2]))
 
-			file.write("\nLR True :: "+str(true_lr))
-			file.write(" from :: "+str(total_test))
-			file.write("\nAccuracy :: "+str((float(true_lr) / float(total_test))))
-			file.write("\nPrecision :: "+str(lr_score[0]))
-			file.write("\nF-Score :: "+str(lr_score[2]))
+			# file.write("\nLR True :: "+str(true_lr))
+			# file.write(" from :: "+str(total_test))
+			# file.write("\nAccuracy :: "+str((float(true_lr) / float(total_test))))
+			# file.write("\nPrecision :: "+str(lr_score[0]))
+			# file.write("\nF-Score :: "+str(lr_score[2]))
 	cursor.close()
 	conn.close()
 	return
